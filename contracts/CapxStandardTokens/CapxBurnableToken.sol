@@ -6,14 +6,15 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 pragma solidity ^0.8.4;
 
-contract CapxMintableToken is IERC20, IERC20Metadata, Ownable {
-
+contract CapxBurnableToken is IERC20, IERC20Metadata, Ownable {
     modifier checkIsAddressValid(address _address)
     {
         require(_address != address(0), "[Validation] Invalid address");
         require(_address == address(_address), "[Validation] Invalid address");
         _;
     }
+
+    bool private _initialized = false;
 
     mapping(address => uint256) private _balances;
 
@@ -41,10 +42,12 @@ contract CapxMintableToken is IERC20, IERC20Metadata, Ownable {
         uint8 decimal_,
         uint256 supply_
     ) checkIsAddressValid(owner_) public {
+        require(!_initialized,"[Validation] Already Initialized.");
         _name = name_;
         _symbol = symbol_;
         _decimal = decimal_;
         _totalSupply = supply_;
+        _initialized = true;
 
         // Transfer Ownership
         _transferOwnership(owner_);
@@ -379,11 +382,27 @@ contract CapxMintableToken is IERC20, IERC20Metadata, Ownable {
     ) internal virtual {}
     
     /**
-     * @dev Mints `amount` tokens for `account`.
+     * @dev Destroys `amount` tokens from the caller.
      *
      * See {ERC20-_burn}.
      */
-    function mint(address account, uint256 amount) external onlyOwner {
-        _mint(account, amount);
+    function burn(uint256 amount) public virtual {
+        _burn(_msgSender(), amount);
+    }
+
+    /**
+     * @dev Destroys `amount` tokens from `account`, deducting from the caller's
+     * allowance.
+     *
+     * See {ERC20-_burn} and {ERC20-allowance}.
+     *
+     * Requirements:
+     *
+     * - the caller must have allowance for ``accounts``'s tokens of at least
+     * `amount`.
+     */
+    function burnFrom(address account, uint256 amount) public virtual {
+        _spendAllowance(account, _msgSender(), amount);
+        _burn(account, amount);
     }
 }
