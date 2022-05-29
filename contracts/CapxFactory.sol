@@ -27,7 +27,7 @@ abstract contract CapxReflectionToken {
 
 contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
 
-    uint256 public typesOfToken = 0;
+    uint256 public typesOfToken;
     mapping(uint256 => address) public erc20Implementations;
     mapping(uint256 => address[]) public deployedContracts;
 
@@ -62,7 +62,8 @@ contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     function initialize (
         address _implementation
     ) public initializer {
-        typesOfToken += 1;
+        __Ownable_init();
+        typesOfToken = 1;
         erc20Implementations[typesOfToken] = _implementation;
         emit newERC20Implementation(
             "CapxStandardToken", 
