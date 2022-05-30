@@ -3,10 +3,15 @@ const burnableToken = artifacts.require("CapxBurnableToken");
 const mintableToken = artifacts.require("CapxMintableToken");
 const burnMintToken = artifacts.require("CapxMintBurnToken");
 
-const standardPauseableToken = artifacts.require("CapxStandardPausableToken");
-const burnablePauseableToken = artifacts.require("CapxBurnablePausableToken");
-const mintablePauseableToken = artifacts.require("CapxMintablePausableToken");
-const burnMintPauseableToken = artifacts.require("CapxMintBurnPausableToken");
+const standardPauseableToken = artifacts.require("CapxStandardPauseableToken");
+const burnablePauseableToken = artifacts.require("CapxBurnablePauseableToken");
+const mintablePauseableToken = artifacts.require("CapxMintablePauseableToken");
+const burnMintPauseableToken = artifacts.require("CapxMintBurnPauseableToken");
+
+const mintCappedToken = artifacts.require("CapxMintableCappedToken");
+const mintBurnCappedToken = artifacts.require("CapxMintBurnCappedToken");
+const mintCappedPauseableToken = artifacts.require("CapxMintableCappedPauseableToken");
+const mintBurnCappedPauseableToken = artifacts.require("CapxMintBurnCappedPauseableToken");
 
 const taxableToken = artifacts.require("CapxTaxableToken");
 const autoLPTaxableToken = artifacts.require("CapxAutoLPTaxableToken");
@@ -39,21 +44,38 @@ module.exports = async function (deployer) {
 
 
     // Pauseable Tokens
-    await console.log("Deploying CapxStandardPausableToken Contract");
-    let CapxStandardPausableToken = await deployer.deploy(standardPauseableToken);
-    await console.log("CapxStandardPausableToken Address " + CapxStandardPausableToken.address);
+    await console.log("Deploying CapxStandardPauseableToken Contract");
+    let CapxStandardPauseableToken = await deployer.deploy(standardPauseableToken);
+    await console.log("CapxStandardPauseableToken Address " + CapxStandardPauseableToken.address);
 
-    await console.log("Deploying CapxBurnablePausableToken Contract");
-    let CapxBurnablePausableToken = await deployer.deploy(burnablePauseableToken);
-    await console.log("CapxBurnablePausableToken Address " + CapxBurnablePausableToken.address);
+    await console.log("Deploying CapxBurnablePauseableToken Contract");
+    let CapxBurnablePauseableToken = await deployer.deploy(burnablePauseableToken);
+    await console.log("CapxBurnablePauseableToken Address " + CapxBurnablePauseableToken.address);
 
-    await console.log("Deploying CapxMintablePausableToken Contract");
-    let CapxMintablePausableToken = await deployer.deploy(mintablePauseableToken);
-    await console.log("CapxMintablePausableToken Address " + CapxMintablePausableToken.address);
+    await console.log("Deploying CapxMintablePauseableToken Contract");
+    let CapxMintablePauseableToken = await deployer.deploy(mintablePauseableToken);
+    await console.log("CapxMintablePauseableToken Address " + CapxMintablePauseableToken.address);
 
-    await console.log("Deploying CapxMintBurnPausableToken Contract");
-    let CapxMintBurnPausableToken = await deployer.deploy(burnMintPauseableToken);
-    await console.log("CapxMintBurnPausableToken Address " + CapxMintBurnPausableToken.address);
+    await console.log("Deploying CapxMintBurnPauseableToken Contract");
+    let CapxMintBurnPauseableToken = await deployer.deploy(burnMintPauseableToken);
+    await console.log("CapxMintBurnPauseableToken Address " + CapxMintBurnPauseableToken.address);
+
+    // Capped Tokens
+    await console.log("Deploying CapxMintableCappedToken Contract");
+    let CapxMintableCappedToken = await deployer.deploy(mintCappedToken);
+    await console.log("CapxMintableCappedToken Address " + CapxMintableCappedToken.address);
+
+    await console.log("Deploying CapxMintBurnCappedToken Contract");
+    let CapxMintBurnCappedToken = await deployer.deploy(mintBurnCappedToken);
+    await console.log("CapxMintBurnCappedToken Address " + CapxMintBurnCappedToken.address);
+
+    await console.log("Deploying CapxMintableCappedPauseableToken Contract");
+    let CapxMintableCappedPauseableToken = await deployer.deploy(mintCappedPauseableToken);
+    await console.log("CapxMintableCappedPauseableToken Address " + CapxMintableCappedPauseableToken.address);
+
+    await console.log("Deploying CapxMintBurnCappedPauseableToken Contract");
+    let CapxMintBurnCappedPauseableToken = await deployer.deploy(mintBurnCappedPauseableToken);
+    await console.log("CapxMintBurnCappedPauseableToken Address " + CapxMintBurnCappedPauseableToken.address);
 
     // Reflection Tokens
     await console.log("Deploying CapxTaxableToken Contract");
@@ -80,6 +102,7 @@ module.exports = async function (deployer) {
     let CapxFactory = await deployProxy(factory, [standardToken.address], { kind: 'uups' });
     await console.log("CapxFactory Address " + CapxFactory.address);
 
+    // Standard Token
     await CapxFactory.addNewERC20Implementation(
         "CapxMintableToken",
         CapxMintableToken.address
@@ -95,26 +118,49 @@ module.exports = async function (deployer) {
         CapxMintBurnToken.address
     );
 
+    // Pauseable Token
     await CapxFactory.addNewERC20Implementation(
-        "CapxStandardPausableToken",
-        CapxStandardPausableToken.address
+        "CapxStandardPauseableToken",
+        CapxStandardPauseableToken.address
     );
 
     await CapxFactory.addNewERC20Implementation(
-        "CapxMintablePausableToken",
-        CapxMintablePausableToken.address
+        "CapxMintablePauseableToken",
+        CapxMintablePauseableToken.address
     );
 
     await CapxFactory.addNewERC20Implementation(
-        "CapxBurnablePausableToken",
-        CapxBurnablePausableToken.address
+        "CapxBurnablePauseableToken",
+        CapxBurnablePauseableToken.address
     );
 
     await CapxFactory.addNewERC20Implementation(
-        "CapxMintBurnPausableToken",
-        CapxMintBurnPausableToken.address
+        "CapxMintBurnPauseableToken",
+        CapxMintBurnPauseableToken.address
     );
 
+    // Capped Tokens
+    await CapxFactory.addNewERC20Implementation(
+        "CapxMintableCappedToken",
+        CapxMintableCappedToken.address
+    );
+
+    await CapxFactory.addNewERC20Implementation(
+        "CapxMintBurnCappedToken",
+        CapxMintBurnCappedToken.address
+    );
+
+    await CapxFactory.addNewERC20Implementation(
+        "CapxMintableCappedPauseableToken",
+        CapxMintableCappedPauseableToken.address
+    );
+
+    await CapxFactory.addNewERC20Implementation(
+        "CapxMintBurnCappedPauseableToken",
+        CapxMintBurnCappedPauseableToken.address
+    );
+
+    // Reflection Tokens
     await CapxFactory.addNewERC20Implementation(
         "CapxTaxableToken",
         CapxTaxableToken.address

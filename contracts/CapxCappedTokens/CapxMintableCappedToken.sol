@@ -3,18 +3,18 @@
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
 
 pragma solidity ^0.8.4;
 
-contract CapxBurnablePausableToken is IERC20, IERC20Metadata, Ownable, Pausable {
+contract CapxMintableCappedToken is IERC20, IERC20Metadata, Ownable {
+
     modifier checkIsAddressValid(address _address)
     {
         require(_address != address(0), "[Validation] Invalid address");
         require(_address == address(_address), "[Validation] Invalid address");
         _;
     }
-
+    
     bool private _initialized = false;
 
     mapping(address => uint256) private _balances;
@@ -22,6 +22,7 @@ contract CapxBurnablePausableToken is IERC20, IERC20Metadata, Ownable, Pausable 
     mapping(address => mapping(address => uint256)) private _allowances;
 
     uint256 private _totalSupply;
+    uint256 private _cap;
 
     string private _name;
     string private _symbol;
@@ -41,20 +42,21 @@ contract CapxBurnablePausableToken is IERC20, IERC20Metadata, Ownable, Pausable 
         string memory symbol_,
         address owner_,
         uint8 decimal_,
-        uint256 supply_
+        uint256 initialSupply_,
+        uint256 totalCappedSupply_
     ) checkIsAddressValid(owner_) public {
         require(!_initialized,"[Validation] Already Initialized.");
         _name = name_;
         _symbol = symbol_;
         _decimal = decimal_;
-        _totalSupply = supply_;
+        _cap = totalCappedSupply_;
         _initialized = true;
 
         // Transfer Ownership
         _transferOwnership(owner_);
 
         // Mint Tokens to the Token Owner
-        _mint(owner_, supply_);
+        _mint(owner_, initialSupply_);
     }
 
     /**
@@ -94,6 +96,13 @@ contract CapxBurnablePausableToken is IERC20, IERC20Metadata, Ownable, Pausable 
      */
     function totalSupply() public view virtual override returns (uint256) {
         return _totalSupply;
+    }
+    
+    /**
+     * @dev Returns the cap on the token's total supply.
+     */
+    function cap() public view virtual returns (uint256) {
+        return _cap;
     }
 
     /**
@@ -228,7 +237,7 @@ contract CapxBurnablePausableToken is IERC20, IERC20Metadata, Ownable, Pausable 
         address from,
         address to,
         uint256 amount
-    ) internal virtual whenNotPaused {
+    ) internal virtual {
         require(from != address(0), "ERC20: transfer from the zero address");
         require(to != address(0), "ERC20: transfer to the zero address");
 
@@ -256,6 +265,7 @@ contract CapxBurnablePausableToken is IERC20, IERC20Metadata, Ownable, Pausable 
      * - `account` cannot be the zero address.
      */
     function _mint(address account, uint256 amount) internal virtual {
+        require(totalSupply() + amount <= cap(), "ERC20Capped: cap exceeded");
         require(account != address(0), "ERC20: mint to the zero address");
 
         _beforeTokenTransfer(address(0), account, amount);
@@ -383,27 +393,11 @@ contract CapxBurnablePausableToken is IERC20, IERC20Metadata, Ownable, Pausable 
     ) internal virtual {}
     
     /**
-     * @dev Destroys `amount` tokens from the caller.
+     * @dev Mints `amount` tokens for `account`.
      *
      * See {ERC20-_burn}.
      */
-    function burn(uint256 amount) public virtual {
-        _burn(_msgSender(), amount);
-    }
-
-    /**
-     * @dev Destroys `amount` tokens from `account`, deducting from the caller's
-     * allowance.
-     *
-     * See {ERC20-_burn} and {ERC20-allowance}.
-     *
-     * Requirements:
-     *
-     * - the caller must have allowance for ``accounts``'s tokens of at least
-     * `amount`.
-     */
-    function burnFrom(address account, uint256 amount) public virtual {
-        _spendAllowance(account, _msgSender(), amount);
-        _burn(account, amount);
+    function mint(address account, uint256 amount) external onlyOwner {
+        _mint(account, amount);
     }
 }

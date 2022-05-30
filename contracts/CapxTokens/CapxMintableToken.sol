@@ -47,7 +47,6 @@ contract CapxMintableToken is IERC20, IERC20Metadata, Ownable {
         _name = name_;
         _symbol = symbol_;
         _decimal = decimal_;
-        _totalSupply = supply_;
         _initialized = true;
 
         // Transfer Ownership

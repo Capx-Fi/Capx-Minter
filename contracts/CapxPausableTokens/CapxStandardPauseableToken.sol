@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 
 pragma solidity ^0.8.4;
 
-contract CapxMintablePausableToken is IERC20, IERC20Metadata, Ownable, Pausable {
+contract CapxStandardPauseableToken is IERC20, IERC20Metadata, Ownable, Pausable {
 
     modifier checkIsAddressValid(address _address)
     {
@@ -38,8 +38,8 @@ contract CapxMintablePausableToken is IERC20, IERC20Metadata, Ownable, Pausable 
      * construction.
      */
     function initializer (
-        string memory name_, 
-        string memory symbol_,
+        string calldata name_, 
+        string calldata symbol_,
         address owner_,
         uint8 decimal_,
         uint256 supply_
@@ -48,7 +48,6 @@ contract CapxMintablePausableToken is IERC20, IERC20Metadata, Ownable, Pausable 
         _name = name_;
         _symbol = symbol_;
         _decimal = decimal_;
-        _totalSupply = supply_;
         _initialized = true;
 
         // Transfer Ownership
@@ -361,7 +360,8 @@ contract CapxMintablePausableToken is IERC20, IERC20Metadata, Ownable, Pausable 
         address from,
         address to,
         uint256 amount
-    ) internal virtual {}
+    ) internal virtual {
+    }
 
     /**
      * @dev Hook that is called after any transfer of tokens. This includes
@@ -382,13 +382,4 @@ contract CapxMintablePausableToken is IERC20, IERC20Metadata, Ownable, Pausable 
         address to,
         uint256 amount
     ) internal virtual {}
-    
-    /**
-     * @dev Mints `amount` tokens for `account`.
-     *
-     * See {ERC20-_burn}.
-     */
-    function mint(address account, uint256 amount) external onlyOwner {
-        _mint(account, amount);
-    }
 }
