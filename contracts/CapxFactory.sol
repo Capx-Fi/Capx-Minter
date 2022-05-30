@@ -14,6 +14,18 @@ abstract contract CapxToken {
         uint256 supply_
     ) public virtual;
 }
+
+abstract contract CapxCappedToken {
+    function initializer (
+        string calldata name_, 
+        string calldata symbol_,
+        address owner_,
+        uint8 decimal_,
+        uint256 initialSupply_,
+        uint256 totalCappedSupply_
+    ) public virtual;
+}
+
 abstract contract CapxReflectionToken {
     function initializer (
         string calldata name_,
@@ -72,7 +84,7 @@ contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         );
     }
 
-    function addNewERC20Implementation(string calldata typeOfToken, address _implementation) checkIsAddressValid(_implementation) external onlyOwner {
+    function addNewERC20Implementation(string calldata typeOfToken, address _implementation) checkIsAddressValid(_implementation) external virtual onlyOwner {
         typesOfToken += 1;
         erc20Implementations[typesOfToken] = _implementation;
         emit newERC20Implementation(
@@ -81,85 +93,131 @@ contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
             _implementation);
     }
 
-    function _getTypeOfToken(bool _mintable, bool _burnable, bool _pausable) internal pure returns (uint256 _typeOfToken) {
-        if(!_pausable) {
-            if(_mintable && _burnable) {
+    /**
+    * @param _features bool parameters:
+            [0] mintable flag, updatable by the owner after creation
+            [1] burnable flag, updatable by the owner after creation
+            [2] Pauseable flag, updatable by the owner after creation
+            [3] capped flag, updatable by the owner after creation
+    */
+    function _getTypeOfToken(bool[4] calldata _features) internal pure virtual returns (uint256 _typeOfToken) {
+        if(!_features[2]) {
+            if(_features[0] && _features[1] && !_features[3]) {
                 // MintBurnToken
                 _typeOfToken = 4; 
-            } else if(_burnable) {
+            } else if(_features[0] && _features[1] && _features[3]) {
+                // MintBurnCappedToken
+                _typeOfToken = 10; 
+            }else if(_features[1]) {
                 // BurnableToken
                 _typeOfToken = 3;
-            } else if(_mintable) {
+            } else if(_features[0] && !_features[3] ) {
                 // MintableToken
                 _typeOfToken = 2;
+            } else if(_features[0] && _features[3] ) {
+                // MintableCappedToken
+                _typeOfToken = 9;
             } else {
                 // StandardToken
                 _typeOfToken = 1;
             }
-        } else if (_pausable){
-            if(_mintable && _burnable) {
-                // PausableMintBurnToken
+        } else if (_features[2]){
+            if(_features[0]  && _features[1] && !_features[3]) {
+                // PauseableMintBurnToken
                 _typeOfToken = 8;
-            } else if(_burnable) {
-                // PausableBurnToken
+            } else if(_features[0] && _features[1] && _features[3]) {
+                // PauseableMintBurnCappedToken
+                _typeOfToken = 12; 
+            } else if(_features[1]) {
+                // PauseableBurnToken
                 _typeOfToken = 7;
-            } else if(_mintable) {
-                // PausableMintToken
+            } else if(_features[0] && !_features[3] ) {
+                // PauseableMintToken
                 _typeOfToken = 6;
+            } else if(_features[0] && _features[3]) {
+                // PauseableMintCappedToken
+                _typeOfToken = 11;
             } else {
-                // PausableStandardToken
+                // PauseableStandardToken
                 _typeOfToken = 5;
             }
         }
     }
 
-    function _getTypeOfReflectionToken(bool[4] calldata _reflectionType) internal pure returns (uint256 _typeOfToken) {
+    function _getTypeOfReflectionToken(bool[4] calldata _reflectionType) internal pure virtual returns (uint256 _typeOfToken) {
         if(_reflectionType[0] && _reflectionType[1] && _reflectionType[2] && _reflectionType[3]){
             // SuperDefaltionaryToken
-            _typeOfToken = 13;
+            _typeOfToken = 17;
         } else if (_reflectionType[0] && _reflectionType[1] && _reflectionType[2] && !_reflectionType[3]) {
             // AutoLPDeflationaryToken
-            _typeOfToken = 12;
+            _typeOfToken = 16;
         } else if (_reflectionType[0] && _reflectionType[1] && !_reflectionType[2] && !_reflectionType[3]){
             // DefaltionaryToken
-            _typeOfToken = 11;
+            _typeOfToken = 15;
         } else if (_reflectionType[0] && !_reflectionType[1] && _reflectionType[2] && !_reflectionType[3]) {
             // AutoLPTaxableToken
-            _typeOfToken = 10;
+            _typeOfToken = 14;
         } else if (_reflectionType[0] && !_reflectionType[1] && !_reflectionType[2] && !_reflectionType[3]) {
             // Taxable Tolen
-            _typeOfToken = 9;
+            _typeOfToken = 13;
         }
     }
-
+    /**
+    * @param _name Token Name
+    * @param _symbol Token Symbol
+    * @param _decimal Token Decimal.
+    * @param _owner Token Owner.
+    * @param _initialSupply Token Supply minted at the time of creation
+    * @param _totalSupply Maximum Token Supply.
+    * @param _features bool parameters:
+            [0] mintable flag, updatable by the owner after creation
+            [1] burnable flag, updatable by the owner after creation
+            [2] Pauseable flag, updatable by the owner after creation
+            [3] capped flag, updatable by the owner after creation
+    */
     function createToken(
         string calldata _name,
         string calldata _symbol,
+        address _owner,
         uint8 _decimal,
-        uint256 _supply,
-        bool _mintable,
-        bool _burnable,
-        bool _pausable
+        uint256 _initialSupply,
+        uint256 _totalSupply,
+        bool[4] calldata _features
     ) external virtual returns (address) {
         // Validation
         require(_decimal >= 8 && _decimal <= 18, "[Validation] Invalid Decimal");
-        require(_supply > 0, "[Validation] Invalid Supply");
-        uint256 _typeOfToken = _getTypeOfToken(_mintable, _burnable, _pausable);
+        require(_initialSupply > 0 && _totalSupply > 0 && _initialSupply <= _totalSupply, "[Validation] Invalid Supply");
+        uint256 _typeOfToken = _getTypeOfToken(_features);
         assert(_typeOfToken != 0);
         address deployed = create(erc20Implementations[_typeOfToken]);
         // Handling low level exception
         assert(deployed != address(0));
         // Initializing Deployed Token
-        CapxToken(deployed).initializer(
-            _name,
-            _symbol,
-            msg.sender,
-            _decimal,
-            _supply
-        );
+        if(_features[3]){
+            CapxCappedToken(deployed).initializer(
+                _name,
+                _symbol,
+                _owner,
+                _decimal,
+                _initialSupply,
+                _totalSupply
+            );
+        } else {
+            CapxToken(deployed).initializer(
+                _name,
+                _symbol,
+                _owner,
+                _decimal,
+                _initialSupply
+            );
+        }
         return deployed;
     }
     /**
+    * @param _name Token Name
+    * @param _symbol Token Symbol
+    * @param _decimal Token Decimal.
+    * @param _supply Token Supply
     * @param _address address parameters:
                     [0] owner, receives totalSupply and controls the parameters
                     [1] Uniswap-like (or) Pancake-like router for autoLiquify on transfers, must have WETH() function

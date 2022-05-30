@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 
 pragma solidity ^0.8.4;
 
-contract CapxStandardPausableToken is IERC20, IERC20Metadata, Ownable, Pausable {
+contract CapxMintablePauseableToken is IERC20, IERC20Metadata, Ownable, Pausable {
 
     modifier checkIsAddressValid(address _address)
     {
@@ -23,6 +23,7 @@ contract CapxStandardPausableToken is IERC20, IERC20Metadata, Ownable, Pausable 
     mapping(address => mapping(address => uint256)) private _allowances;
 
     uint256 private _totalSupply;
+    uint256 private _cap;
 
     string private _name;
     string private _symbol;
@@ -38,24 +39,25 @@ contract CapxStandardPausableToken is IERC20, IERC20Metadata, Ownable, Pausable 
      * construction.
      */
     function initializer (
-        string calldata name_, 
-        string calldata symbol_,
+        string memory name_, 
+        string memory symbol_,
         address owner_,
         uint8 decimal_,
-        uint256 supply_
+        uint256 initialSupply_,
+        uint256 totalCappedSupply_
     ) checkIsAddressValid(owner_) public {
         require(!_initialized,"[Validation] Already Initialized.");
         _name = name_;
         _symbol = symbol_;
         _decimal = decimal_;
-        _totalSupply = supply_;
+        _cap = totalCappedSupply_;
         _initialized = true;
 
         // Transfer Ownership
         _transferOwnership(owner_);
 
         // Mint Tokens to the Token Owner
-        _mint(owner_, supply_);
+        _mint(owner_, initialSupply_);
     }
 
     /**
@@ -97,6 +99,13 @@ contract CapxStandardPausableToken is IERC20, IERC20Metadata, Ownable, Pausable 
         return _totalSupply;
     }
 
+    /**
+     * @dev Returns the cap on the token's total supply.
+     */
+    function cap() public view virtual returns (uint256) {
+        return _cap;
+    }
+    
     /**
      * @dev See {IERC20-balanceOf}.
      */
@@ -257,6 +266,7 @@ contract CapxStandardPausableToken is IERC20, IERC20Metadata, Ownable, Pausable 
      * - `account` cannot be the zero address.
      */
     function _mint(address account, uint256 amount) internal virtual {
+        require(totalSupply() + amount <= cap(), "ERC20Capped: cap exceeded");
         require(account != address(0), "ERC20: mint to the zero address");
 
         _beforeTokenTransfer(address(0), account, amount);
@@ -361,8 +371,7 @@ contract CapxStandardPausableToken is IERC20, IERC20Metadata, Ownable, Pausable 
         address from,
         address to,
         uint256 amount
-    ) internal virtual {
-    }
+    ) internal virtual {}
 
     /**
      * @dev Hook that is called after any transfer of tokens. This includes
@@ -383,4 +392,13 @@ contract CapxStandardPausableToken is IERC20, IERC20Metadata, Ownable, Pausable 
         address to,
         uint256 amount
     ) internal virtual {}
+    
+    /**
+     * @dev Mints `amount` tokens for `account`.
+     *
+     * See {ERC20-_burn}.
+     */
+    function mint(address account, uint256 amount) external onlyOwner {
+        _mint(account, amount);
+    }
 }
