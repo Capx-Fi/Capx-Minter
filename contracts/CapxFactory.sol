@@ -5,6 +5,9 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
+interface ContractSample {
+    function symbol() view external returns (string memory);
+}
 abstract contract CapxToken {
     function initializer (
         string calldata name_, 
@@ -281,5 +284,10 @@ contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
             )
             result := create(0, clone, 0x37)
         }
+    }
+
+    function checkCloneContractWorking(address _clone) public view returns (bool) {
+        ContractSample clone = ContractSample(_clone);
+        return bytes(clone.symbol()).length != 0;
     }
 }

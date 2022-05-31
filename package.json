@@ -6,6 +6,7 @@
         "npm": "8.8.x"
     },
     "devDependencies": {
+        "solidity-coverage": "^0.7.21",
         "truffle": "^5.5.15",
         "truffle-contract-size": "^2.0.1"
     },
