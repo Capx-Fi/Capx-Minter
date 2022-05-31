@@ -401,4 +401,12 @@ contract CapxMintableCappedPauseableToken is IERC20, IERC20Metadata, Ownable, Pa
     function mint(address account, uint256 amount) external onlyOwner {
         _mint(account, amount);
     }
+
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
+    }
 }

@@ -425,4 +425,12 @@ contract CapxMintBurnCappedPauseableToken is IERC20, IERC20Metadata, Ownable, Pa
         _spendAllowance(account, _msgSender(), amount);
         _burn(account, amount);
     }
+
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
+    }
 }
