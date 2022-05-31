@@ -382,4 +382,12 @@ contract CapxStandardPauseableToken is IERC20, IERC20Metadata, Ownable, Pausable
         address to,
         uint256 amount
     ) internal virtual {}
+
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
+    }
 }

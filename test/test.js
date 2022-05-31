@@ -71,7 +71,7 @@ contract("Testing token workings" , async (accounts) => {
         superDeflationaryTokenInstance = await superDeflationaryToken.deployed();
 
         assert(factoryInstance.address != undefined, "Factory contract address is undefined");
-        assert(standardTokenInstance.address != undefined, "Standard token address is undefined");
+        assert(standardTokenInstance.address != undefined, "token address is undefined");
         assert(burnableTokenInstance.address != undefined, "Burnable token address is undefined");
         assert(mintableTokenInstance.address != undefined, "Mintable token address is undefined");
         assert(burnMintTokenInstance.address != undefined, "BurnMint token address is undefined");
@@ -112,7 +112,7 @@ contract("Standard Tokem", async (accounts) => {
         standardTokenInstance = await standardToken.at(standardtoken);
     })
     it("Creating a Standard token clone", async () => {
-        assert(standardTokenInstance.address != undefined, "Standard token address is undefined");
+        assert(standardTokenInstance.address != undefined, "token address is undefined");
     }); 
 
     it('set name', async () => {
@@ -353,11 +353,11 @@ contract("Burnable Token", async (accounts) => {
     before(async () => {
         factoryInstance = await factory.deployed();
         let burnabletoken = ((await factoryInstance.createToken(tokenName, tokenSymbol,ownerAddress, tokenDecimals,tokenTotalSupply ,tokenTotalSupply, [false ,true ,false ,false ])).logs[0].address); 
-        console.log("Standard Token Clone deployed at : " + burnabletoken.toString());
+        console.log("Burnable Token Clone deployed at : " + burnabletoken.toString());
         burnableTokenInstance = await burnableToken.at(burnabletoken);
     })
     it("Creating a Burnable token clone", async () => {
-        assert(burnableTokenInstance.address != undefined, "Standard token address is undefined");
+        assert(burnableTokenInstance.address != undefined, "token address is undefined");
     }); 
 
     it('set name', async () => {
@@ -541,11 +541,11 @@ contract("Mintable Token", async (accounts) => {
     before(async () => {
         factoryInstance = await factory.deployed();
         let mintabletoken = ((await factoryInstance.createToken(tokenName, tokenSymbol,ownerAddress, tokenDecimals,tokenTotalSupply ,tokenTotalSupply, [true ,false ,false ,false ])).logs[0].address); 
-        console.log("Standard Token Clone deployed at : " + mintabletoken.toString());
+        console.log("Mintable Token Clone deployed at : " + mintabletoken.toString());
         mintableTokenInstance = await mintableToken.at(mintabletoken);
     })
     it("Creating a Mintable token clone", async () => {
-        assert(mintableTokenInstance.address != undefined, "Standard token address is undefined");
+        assert(mintableTokenInstance.address != undefined, "token address is undefined");
     }); 
 
     it('set name', async () => {
@@ -694,15 +694,6 @@ contract("Mintable Token", async (accounts) => {
         }
     });
 
-    // it('mintTo should throw if amount is invalid', async () => {
-    //     try {
-    //         await mintableTokenInstance.mint(address1, 0, { from: ownerAddress })
-    //         assert(false,"Invalid amount accepted");
-    //     } catch (error) {
-    //         assert(true,"Invalid amount accepted");
-    //     }
-    // });
-
     it('mint should throw if account is not a minter', async () => {
         const mintValue = 1000;
 
@@ -745,11 +736,11 @@ contract("MintableBurnableToken", accounts => {
     before(async () => {
         factoryInstance = await factory.deployed();
         let burnminttoken = ((await factoryInstance.createToken(tokenName, tokenSymbol,ownerAddress, tokenDecimals,tokenTotalSupply ,tokenTotalSupply, [true ,true ,false ,false ])).logs[0].address); 
-        console.log("Standard Token Clone deployed at : " + burnminttoken.toString());
+        console.log("Mintable Burnable Token Clone deployed at : " + burnminttoken.toString());
         burnMintTokenInstance = await burnMintToken.at(burnminttoken);
     })
-    it("Creating a Mintable token clone", async () => {
-        assert(burnMintTokenInstance.address != undefined, "Standard token address is undefined");
+    it("Creating a Mintable Burnable token clone", async () => {
+        assert(burnMintTokenInstance.address != undefined, "token address is undefined");
     }); 
 
     it('set name', async () => {
@@ -898,15 +889,6 @@ contract("MintableBurnableToken", accounts => {
         }
     });
 
-    // it('mintTo should throw if amount is invalid', async () => {
-    //     try {
-    //         await burnMintTokenInstance.mint(address1, 0, { from: ownerAddress })
-    //         assert(false,"Invalid amount accepted");
-    //     } catch (error) {
-    //         assert(true,"Invalid amount accepted");
-    //     }
-    // });
-
     it('mintTo should throw if account is not a minter', async () => {
         const mintValue = 1000;
 
@@ -966,3 +948,876 @@ contract("MintableBurnableToken", accounts => {
 
 
 })
+
+contract("Standard Pausable Token", async (accounts) => {
+    const tokenName = 'Standard Pausable Token';
+    const tokenSymbol = 'SPT';
+    const tokenDecimals = 18;
+    const tokenTotalSupply = 50000000000;
+    const ownerAddress = accounts[0];
+    const owner = accounts[0];
+    const address1 = accounts[1];
+    const address2 = accounts[2];
+
+    before(async () => {
+        factoryInstance = await factory.deployed();
+        let standardpausabletoken = ((await factoryInstance.createToken(tokenName, tokenSymbol,ownerAddress, tokenDecimals,tokenTotalSupply ,tokenTotalSupply, [false ,false ,true ,false ])).logs[0].address); 
+        console.log("Standard Pausable Token Clone deployed at : " + standardpausabletoken.toString());
+        standardPauseableTokenInstance = await standardPauseableToken.at(standardpausabletoken);
+    })
+    it("Creating a Standard Pausable token clone", async () => {
+        assert(standardPauseableTokenInstance.address != undefined, "token address is undefined");
+    }); 
+
+    it('set name', async () => {
+        const result = await standardPauseableTokenInstance.name();
+        assert.equal(tokenName, result, 'name is wrong');
+    });
+
+    it('set symbol', async () => {
+        const result = await standardPauseableTokenInstance.symbol();
+        assert.equal(tokenSymbol, result, 'symbol is wrong');
+    });
+
+    it('set decimals', async () => {
+        const result = await standardPauseableTokenInstance.decimals();
+        assert.equal(tokenDecimals, result, 'decimals is wrong');
+    });
+
+    it('set totalSupply', async () => {
+        const result = await standardPauseableTokenInstance.totalSupply();
+        assert.equal(tokenTotalSupply, result, 'totalSupply is wrong');
+    });
+
+    it('transfer should throw if contract is paused', async () => {
+        await standardPauseableTokenInstance.pause({ from: ownerAddress });
+        
+        try {
+            await standardPauseableTokenInstance.transfer(address1, 1000, { from: ownerAddress });
+            assert(false,"Transfer accepted");
+        } catch (error) {
+            assert(true,"Transfer succeded while contract was paused");
+        }
+
+        await standardPauseableTokenInstance.unpause({ from: ownerAddress });
+    });
+
+    it('transfer should throw if to address is not valid', async () => {
+        
+        try {
+            await standardPauseableTokenInstance.transfer('0x0000000000000000000000000000000000000000', 1000, { from: ownerAddress });
+            assert(false,"Invalid address accepted");
+        } catch (error) {
+            assert(true,"Invalid address accepted");
+        }
+    });
+
+    it('transfer should throw if balance is insufficient', async () => {
+        
+    try {
+        await standardPauseableTokenInstance.transfer(ownerAddress, 1000, { from: address1 });
+        assert(false,"Insufficient balance accepted");
+    } catch (error) {
+        assert(true,"Insufficient balance accepted");
+    }
+        
+        
+    });
+
+    it('transfer success', async () => {
+        const result = await standardPauseableTokenInstance.transfer(address1, 1000, { from: ownerAddress });
+       
+        assert(result.logs[0].event == "Transfer", "Transfer event not emitted");
+    });
+
+    it('balanceOf success', async () => {
+        const result = await standardPauseableTokenInstance.balanceOf(ownerAddress, { from: ownerAddress });
+        
+        assert.equal(result.toNumber(), tokenTotalSupply-1000, 'balance is wrong'); //Since 1000 is transferred in the previous test
+    });
+
+    it('approve success', async () => {
+        const result = await standardPauseableTokenInstance.approve(address1, 1000, { from: ownerAddress });
+        
+        assert(result.logs[0].event == "Approval", "Approval event not emitted");
+    });
+
+    it('transferFrom should throw if contract is paused', async () => {
+        await standardPauseableTokenInstance.pause({ from: ownerAddress });
+        
+        try {
+            await standardPauseableTokenInstance.transferFrom(ownerAddress, address2, 1000, { from: address1 });
+            assert(false,"TransferFrom accepted");
+        } catch (error) {
+            assert(true,"TransferFrom succeded while contract was paused");
+        }
+
+        await standardPauseableTokenInstance.unpause({ from: ownerAddress });
+    });
+
+    it('transferFrom should throw if from address is not valid', async () => {
+        try {
+            await standardPauseableTokenInstance.transferFrom('0x0000000000000000000000000000000000000000', address1, 1000, { from: ownerAddress })
+            assert(false,"Invalid address accepted");
+        } catch (error) {
+            assert(true,"Invalid address accepted");
+        }
+    });
+
+    it('transferFrom should throw if to address is not valid', async () => {
+        try {
+            await standardPauseableTokenInstance.transferFrom(address1, '0x0000000000000000000000000000000000000000', 1000, { from: ownerAddress })
+            assert(false,"Invalid address accepted");
+        } catch (error) {
+            assert(true,"Invalid address accepted");
+        }
+    });
+
+    it('transferFrom should throw if balance is insufficient', async () => {
+        try {
+            await standardPauseableTokenInstance.transferFrom(address1, address2, 1000, { from: address1 })
+            assert(false,"Insufficient balance accepted");
+        } catch (error) {
+            assert(true,"Insufficient balance accepted");
+        }
+    });
+
+    it('transferFrom should throw if sender is not approved', async () => {
+        try {
+            await standardPauseableTokenInstance.transferFrom(ownerAddress, address1, 1000, { from: ownerAddress })
+            assert(false,"Sender is not approved");
+        } catch (error) {
+            assert(true,"Sender is not approved");
+        }
+    });
+
+    it('transferFrom success', async () => {
+        const result = await standardPauseableTokenInstance.transferFrom(ownerAddress, address2, 1000, { from: address1 });
+        assert(result.logs[1].event == "Transfer", "Transfer event not emitted");
+    });
+
+    it('not allowance', async () => {
+        const result = await standardPauseableTokenInstance.allowance(ownerAddress, address1, { from: ownerAddress });
+        
+        assert.equal(0, result.toNumber(), 'No Allowance test failed');
+    });
+
+    it('allowance', async () => {
+        const expectedAmount = 1000;
+        
+        await standardPauseableTokenInstance.approve(address1, expectedAmount, { from: ownerAddress });
+        const result = await standardPauseableTokenInstance.allowance(ownerAddress, address1, { from: ownerAddress });
+        
+        assert.equal(expectedAmount, result.toNumber(), 'Allowance test failed');
+    });
+
+    it('increaseApproval success', async () => {
+        const expectedAmount = 2000;
+        
+        const resultIncrease = await standardPauseableTokenInstance.increaseAllowance(address1, 1000, { from: ownerAddress });
+        const resultAfterIncrease = await standardPauseableTokenInstance.allowance(ownerAddress, address1, { from: ownerAddress });
+        
+        assert.equal(expectedAmount, resultAfterIncrease.toNumber(), 'wrong result after increase');
+        assert(resultIncrease.logs[0].event == "Approval", "Approval event not emitted");
+    });
+
+    it('decreaseApproval success', async () => {
+        const initialAmount = 2000;
+        const expectedAmount = 1000;
+        
+        const resultDecrease = await standardPauseableTokenInstance.decreaseAllowance(address1, 1000, { from: ownerAddress });
+        const resultAfterDecrease = await standardPauseableTokenInstance.allowance(ownerAddress, address1, { from: ownerAddress });
+        
+        assert.equal(expectedAmount, resultAfterDecrease.toNumber(), 'wrong result after increase');
+        assert(resultDecrease.logs[0].event == "Approval", "Approval event not emitted");
+    });
+})
+
+contract("Burnable Pausable Token", async (accounts) => {
+    const tokenName = 'Burnable Pausable Token';
+    const tokenSymbol = 'BPT';
+    const tokenDecimals = 18;
+    const tokenTotalSupply = 50000000000;
+    const ownerAddress = accounts[0];
+    const owner = accounts[0];
+    const address1 = accounts[1];
+    const address2 = accounts[2];
+
+    before(async () => {
+        factoryInstance = await factory.deployed();
+        let burnablepausabletoken = ((await factoryInstance.createToken(tokenName, tokenSymbol,ownerAddress, tokenDecimals,tokenTotalSupply ,tokenTotalSupply, [false ,true ,true ,false ])).logs[0].address); 
+        console.log("Burnable Pausable Token Clone deployed at : " + burnablepausabletoken.toString());
+        burnablePauseableTokenInstance = await burnablePauseableToken.at(burnablepausabletoken);
+    })
+    it("Creating a Burnable Pausable token clone", async () => {
+        assert(burnablePauseableTokenInstance.address != undefined, "token address is undefined");
+    }); 
+
+    it('set name', async () => {
+        const result = await burnablePauseableTokenInstance.name();
+        assert.equal(tokenName, result, 'name is wrong');
+    });
+
+    it('set symbol', async () => {
+        const result = await burnablePauseableTokenInstance.symbol();
+        assert.equal(tokenSymbol, result, 'symbol is wrong');
+    });
+
+    it('set decimals', async () => {
+        const result = await burnablePauseableTokenInstance.decimals();
+        assert.equal(tokenDecimals, result, 'decimals is wrong');
+    });
+
+    it('set totalSupply', async () => {
+        const result = await burnablePauseableTokenInstance.totalSupply();
+        assert.equal(tokenTotalSupply, result, 'totalSupply is wrong');
+    });
+
+    it('transfer should throw if contract is paused', async () => {
+        await burnablePauseableTokenInstance.pause({ from: ownerAddress });
+        
+        try {
+            await burnablePauseableTokenInstance.transfer(address1, 1000, { from: ownerAddress });
+            assert(false,"Transfer accepted");
+        } catch (error) {
+            assert(true,"Transfer succeded while contract was paused");
+        }
+
+        await burnablePauseableTokenInstance.unpause({ from: ownerAddress });
+    });
+
+    it('transfer should throw if to address is not valid', async () => {
+        
+        try {
+            await burnablePauseableTokenInstance.transfer('0x0000000000000000000000000000000000000000', 1000, { from: ownerAddress });
+            assert(false,"Invalid address accepted");
+        } catch (error) {
+            assert(true,"Invalid address accepted");
+        }
+    });
+
+    it('transfer should throw if balance is insufficient', async () => {
+        
+    try {
+        await burnablePauseableTokenInstance.transfer(ownerAddress, 1000, { from: address1 });
+        assert(false,"Insufficient balance accepted");
+    } catch (error) {
+        assert(true,"Insufficient balance accepted");
+    }
+        
+        
+    });
+
+    it('transfer success', async () => {
+        const result = await burnablePauseableTokenInstance.transfer(address1, 1000, { from: ownerAddress });
+       
+        assert(result.logs[0].event == "Transfer", "Transfer event not emitted");
+    });
+
+    it('balanceOf success', async () => {
+        const result = await burnablePauseableTokenInstance.balanceOf(ownerAddress, { from: ownerAddress });
+        
+        assert.equal(result.toNumber(), tokenTotalSupply-1000, 'balance is wrong'); //Since 1000 is transferred in the previous test
+    });
+
+    it('approve success', async () => {
+        const result = await burnablePauseableTokenInstance.approve(address1, 1000, { from: ownerAddress });
+        
+        assert(result.logs[0].event == "Approval", "Approval event not emitted");
+    });
+
+    it('transferFrom should throw if contract is paused', async () => {
+        await burnablePauseableTokenInstance.pause({ from: ownerAddress });
+        
+        try {
+            await burnablePauseableTokenInstance.transferFrom(ownerAddress, address2, 1000, { from: address1 });
+            assert(false,"transferFrom accepted");
+        } catch (error) {
+            assert(true,"transferFrom succeded while contract was paused");
+        }
+
+        await burnablePauseableTokenInstance.unpause({ from: ownerAddress });
+    });
+
+    it('transferFrom should throw if from address is not valid', async () => {
+        try {
+            await burnablePauseableTokenInstance.transferFrom('0x0000000000000000000000000000000000000000', address1, 1000, { from: ownerAddress })
+            assert(false,"Invalid address accepted");
+        } catch (error) {
+            assert(true,"Invalid address accepted");
+        }
+    });
+
+    it('transferFrom should throw if to address is not valid', async () => {
+        try {
+            await burnablePauseableTokenInstance.transferFrom(address1, '0x0000000000000000000000000000000000000000', 1000, { from: ownerAddress })
+            assert(false,"Invalid address accepted");
+        } catch (error) {
+            assert(true,"Invalid address accepted");
+        }
+    });
+
+    it('transferFrom should throw if balance is insufficient', async () => {
+        try {
+            await burnablePauseableTokenInstance.transferFrom(address1, address2, 1000, { from: address1 })
+            assert(false,"Insufficient balance accepted");
+        } catch (error) {
+            assert(true,"Insufficient balance accepted");
+        }
+    });
+
+    it('transferFrom should throw if sender is not approved', async () => {
+        try {
+            await burnablePauseableTokenInstance.transferFrom(ownerAddress, address1, 1000, { from: ownerAddress })
+            assert(false,"Sender is not approved");
+        } catch (error) {
+            assert(true,"Sender is not approved");
+        }
+    });
+
+    it('transferFrom success', async () => {
+        const result = await burnablePauseableTokenInstance.transferFrom(ownerAddress, address2, 1000, { from: address1 });
+        assert(result.logs[1].event == "Transfer", "Transfer event not emitted");
+    });
+
+    it('not allowance', async () => {
+        const result = await burnablePauseableTokenInstance.allowance(ownerAddress, address1, { from: ownerAddress });
+        
+        assert.equal(0, result.toNumber(), 'No Allowance test failed');
+    });
+
+    it('allowance', async () => {
+        const expectedAmount = 1000;
+        
+        await burnablePauseableTokenInstance.approve(address1, expectedAmount, { from: ownerAddress });
+        const result = await burnablePauseableTokenInstance.allowance(ownerAddress, address1, { from: ownerAddress });
+        
+        assert.equal(expectedAmount, result.toNumber(), 'Allowance test failed');
+    });
+
+    it('increaseApproval success', async () => {
+        const expectedAmount = 2000;
+        
+        const resultIncrease = await burnablePauseableTokenInstance.increaseAllowance(address1, 1000, { from: ownerAddress });
+        const resultAfterIncrease = await burnablePauseableTokenInstance.allowance(ownerAddress, address1, { from: ownerAddress });
+        
+        assert.equal(expectedAmount, resultAfterIncrease.toNumber(), 'wrong result after increase');
+        assert(resultIncrease.logs[0].event == "Approval", "Approval event not emitted");
+    });
+
+    it('decreaseApproval success', async () => {
+        const initialAmount = 2000;
+        const expectedAmount = 1000;
+        
+        const resultDecrease = await burnablePauseableTokenInstance.decreaseAllowance(address1, 1000, { from: ownerAddress });
+        const resultAfterDecrease = await burnablePauseableTokenInstance.allowance(ownerAddress, address1, { from: ownerAddress });
+        
+        assert.equal(expectedAmount, resultAfterDecrease.toNumber(), 'wrong result after increase');
+        assert(resultDecrease.logs[0].event == "Approval", "Approval event not emitted");
+    });
+
+    it('burn should throw if from address is invalid', async () => {
+        try {
+            await burnableTokenInstance.burn('0x0000000000000000000000000000000000000000', 1000, { from: ownerAddress })
+            assert(false,"Invalid address accepted");
+        } catch (error) {
+            assert(true,"Invalid address accepted");
+        }
+    });
+
+    it('burn should throw if balance is insufficient', async () => {
+        try {
+            await burnableTokenInstance.burn(1000, { from: accounts[3] })
+            assert(false,"Insufficient balance accepted");
+        } catch (error) {
+            assert(true,"Insufficient balance accepted");
+        }
+    });
+
+    it('burn success', async () => {
+        const burnValue = 500;
+        const initialBalanceOf = await burnableTokenInstance.balanceOf(ownerAddress);
+        await burnableTokenInstance.burn( burnValue, { from: ownerAddress });
+        const expectedTotalSupply = (tokenTotalSupply) - burnValue;
+        const resultAfterBurn = await burnableTokenInstance.totalSupply();
+        const resultBalanceOf = await burnableTokenInstance.balanceOf(ownerAddress);
+
+        assert.equal(expectedTotalSupply, resultAfterBurn, 'wrong totalSupply after');
+        assert.equal(initialBalanceOf - burnValue, resultBalanceOf, 'wrong balance after');
+    });
+
+
+})
+
+contract("Mintable Pausable Token", async (accounts) => {
+    const tokenName = 'Mintable Pausable Token';
+    const tokenSymbol = 'SPT';
+    const tokenDecimals = 18;
+    const tokenTotalSupply = 50000000000;
+    const ownerAddress = accounts[0];
+    const owner = accounts[0];
+    const address1 = accounts[1];
+    const address2 = accounts[2];
+
+    before(async () => {
+        factoryInstance = await factory.deployed();
+        let mintablepausabletoken = ((await factoryInstance.createToken(tokenName, tokenSymbol,ownerAddress, tokenDecimals,tokenTotalSupply ,tokenTotalSupply, [true ,false ,true ,false ])).logs[0].address); 
+        console.log("Mintable Pausable Token Clone deployed at : " + mintablepausabletoken.toString());
+        mintablePauseableTokenInstance = await mintablePauseableToken.at(mintablepausabletoken);
+    })
+    it("Creating a Mintable Pausable token clone", async () => {
+        assert(mintablePauseableTokenInstance.address != undefined, "token address is undefined");
+    }); 
+
+    it('set name', async () => {
+        const result = await mintablePauseableTokenInstance.name();
+        assert.equal(tokenName, result, 'name is wrong');
+    });
+
+    it('set symbol', async () => {
+        const result = await mintablePauseableTokenInstance.symbol();
+        assert.equal(tokenSymbol, result, 'symbol is wrong');
+    });
+
+    it('set decimals', async () => {
+        const result = await mintablePauseableTokenInstance.decimals();
+        assert.equal(tokenDecimals, result, 'decimals is wrong');
+    });
+
+    it('set totalSupply', async () => {
+        const result = await mintablePauseableTokenInstance.totalSupply();
+        assert.equal(tokenTotalSupply, result, 'totalSupply is wrong');
+    });
+
+    it('transfer should throw if contract is paused', async () => {
+        await mintablePauseableTokenInstance.pause({ from: ownerAddress });
+        
+        try {
+            await mintablePauseableTokenInstance.transfer(address1, 1000, { from: ownerAddress });
+            assert(false,"Transfer accepted");
+        } catch (error) {
+            assert(true,"Transfer succeded while contract was paused");
+        }
+
+        await mintablePauseableTokenInstance.unpause({ from: ownerAddress });
+    });
+
+    it('transfer should throw if to address is not valid', async () => {
+        
+        try {
+            await mintablePauseableTokenInstance.transfer('0x0000000000000000000000000000000000000000', 1000, { from: ownerAddress });
+            assert(false,"Invalid address accepted");
+        } catch (error) {
+            assert(true,"Invalid address accepted");
+        }
+    });
+
+    it('transfer should throw if balance is insufficient', async () => {
+        
+    try {
+        await mintablePauseableTokenInstance.transfer(ownerAddress, 1000, { from: address1 });
+        assert(false,"Insufficient balance accepted");
+    } catch (error) {
+        assert(true,"Insufficient balance accepted");
+    }
+        
+        
+    });
+
+    it('transfer success', async () => {
+        const result = await mintablePauseableTokenInstance.transfer(address1, 1000, { from: ownerAddress });
+       
+        assert(result.logs[0].event == "Transfer", "Transfer event not emitted");
+    });
+
+    it('balanceOf success', async () => {
+        const result = await mintablePauseableTokenInstance.balanceOf(ownerAddress, { from: ownerAddress });
+        
+        assert.equal(result.toNumber(), tokenTotalSupply-1000, 'balance is wrong'); //Since 1000 is transferred in the previous test
+    });
+
+    it('approve success', async () => {
+        const result = await mintablePauseableTokenInstance.approve(address1, 1000, { from: ownerAddress });
+        
+        assert(result.logs[0].event == "Approval", "Approval event not emitted");
+    });
+
+    it('transferFrom should throw if contract is paused', async () => {
+        await mintablePauseableTokenInstance.pause({ from: ownerAddress });
+        
+        try {
+            await mintablePauseableTokenInstance.transferFrom(ownerAddress, address2, 1000, { from: address1 });
+            assert(false,"TransferFrom accepted");
+        } catch (error) {
+            assert(true,"TransferFrom succeded while contract was paused");
+        }
+
+        await mintablePauseableTokenInstance.unpause({ from: ownerAddress });
+    });
+
+    it('transferFrom should throw if from address is not valid', async () => {
+        try {
+            await mintablePauseableTokenInstance.transferFrom('0x0000000000000000000000000000000000000000', address1, 1000, { from: ownerAddress })
+            assert(false,"Invalid address accepted");
+        } catch (error) {
+            assert(true,"Invalid address accepted");
+        }
+    });
+
+    it('transferFrom should throw if to address is not valid', async () => {
+        try {
+            await mintablePauseableTokenInstance.transferFrom(address1, '0x0000000000000000000000000000000000000000', 1000, { from: ownerAddress })
+            assert(false,"Invalid address accepted");
+        } catch (error) {
+            assert(true,"Invalid address accepted");
+        }
+    });
+
+    it('transferFrom should throw if balance is insufficient', async () => {
+        try {
+            await mintablePauseableTokenInstance.transferFrom(address1, address2, 1000, { from: address1 })
+            assert(false,"Insufficient balance accepted");
+        } catch (error) {
+            assert(true,"Insufficient balance accepted");
+        }
+    });
+
+    it('transferFrom should throw if sender is not approved', async () => {
+        try {
+            await mintablePauseableTokenInstance.transferFrom(ownerAddress, address1, 1000, { from: ownerAddress })
+            assert(false,"Sender is not approved");
+        } catch (error) {
+            assert(true,"Sender is not approved");
+        }
+    });
+
+    it('transferFrom success', async () => {
+        const result = await mintablePauseableTokenInstance.transferFrom(ownerAddress, address2, 1000, { from: address1 });
+        assert(result.logs[1].event == "Transfer", "Transfer event not emitted");
+    });
+
+    it('not allowance', async () => {
+        const result = await mintablePauseableTokenInstance.allowance(ownerAddress, address1, { from: ownerAddress });
+        
+        assert.equal(0, result.toNumber(), 'No Allowance test failed');
+    });
+
+    it('allowance', async () => {
+        const expectedAmount = 1000;
+        
+        await mintablePauseableTokenInstance.approve(address1, expectedAmount, { from: ownerAddress });
+        const result = await mintablePauseableTokenInstance.allowance(ownerAddress, address1, { from: ownerAddress });
+        
+        assert.equal(expectedAmount, result.toNumber(), 'Allowance test failed');
+    });
+
+    it('increaseApproval success', async () => {
+        const expectedAmount = 2000;
+        
+        const resultIncrease = await mintablePauseableTokenInstance.increaseAllowance(address1, 1000, { from: ownerAddress });
+        const resultAfterIncrease = await mintablePauseableTokenInstance.allowance(ownerAddress, address1, { from: ownerAddress });
+        
+        assert.equal(expectedAmount, resultAfterIncrease.toNumber(), 'wrong result after increase');
+        assert(resultIncrease.logs[0].event == "Approval", "Approval event not emitted");
+    });
+
+    it('decreaseApproval success', async () => {
+        const initialAmount = 2000;
+        const expectedAmount = 1000;
+        
+        const resultDecrease = await mintablePauseableTokenInstance.decreaseAllowance(address1, 1000, { from: ownerAddress });
+        const resultAfterDecrease = await mintablePauseableTokenInstance.allowance(ownerAddress, address1, { from: ownerAddress });
+        
+        assert.equal(expectedAmount, resultAfterDecrease.toNumber(), 'wrong result after increase');
+        assert(resultDecrease.logs[0].event == "Approval", "Approval event not emitted");
+    });
+
+    it('mint should throw if to address is invalid', async () => {
+        try {
+            await mintablePauseableTokenInstance.mint('0x0000000000000000000000000000000000000000', 1000, { from: ownerAddress });
+            assert(false,"Invalid address accepted");
+        } catch (error) {
+            assert(true,"Invalid address accepted");
+        }
+    });
+
+    it('mint should throw if account is not a minter', async () => {
+        const mintValue = 1000;
+
+        try {
+            (await mintablePauseableTokenInstance.mint(address1, mintValue, { from: address1 }))
+            assert(false,"Account is not a minter");
+        } catch (error) {
+            assert(true,"Account is not a minter");
+        }
+    });
+
+    it('mint success', async () => {
+        const mintValue = 500;
+
+        const resultBeforeMint = await mintablePauseableTokenInstance.totalSupply();
+        const initialBalanceOf = await mintablePauseableTokenInstance.balanceOf(address1);
+        await mintablePauseableTokenInstance.mint(address1, mintValue);
+        const expectedTotalSupply = resultBeforeMint.toNumber() + mintValue;
+        const resultAfterMint = await mintablePauseableTokenInstance.totalSupply();
+        const resultBalanceOf = await mintablePauseableTokenInstance.balanceOf(address1, { from: address1 });
+
+        assert.equal(tokenTotalSupply, resultBeforeMint, 'wrong totalSupply before');
+        assert.equal(expectedTotalSupply, resultAfterMint, 'wrong totalSupply after');
+        assert.equal(initialBalanceOf.toNumber() + mintValue, resultBalanceOf, 'wrong balance');
+    });
+
+
+})
+
+contract("Burnable Mintable Pausable Token", async (accounts) => {
+    const tokenName = 'Burnable Mintable Pausable Token';
+    const tokenSymbol = 'BMPT';
+    const tokenDecimals = 18;
+    const tokenTotalSupply = 50000000000;
+    const ownerAddress = accounts[0];
+    const owner = accounts[0];
+    const address1 = accounts[1];
+    const address2 = accounts[2];
+
+    before(async () => {
+        factoryInstance = await factory.deployed();
+        let standardpausabletoken = ((await factoryInstance.createToken(tokenName, tokenSymbol,ownerAddress, tokenDecimals,tokenTotalSupply ,tokenTotalSupply, [true ,true ,true ,false ])).logs[0].address); 
+        console.log("Burnable Mintable Pausable Token Clone deployed at : " + standardpausabletoken.toString());
+        standardPauseableTokenInstance = await standardPauseableToken.at(standardpausabletoken);
+    })
+    it("Creating a Burnable Mintable Pausable token clone", async () => {
+        assert(standardPauseableTokenInstance.address != undefined, "token address is undefined");
+    }); 
+
+    it('set name', async () => {
+        const result = await standardPauseableTokenInstance.name();
+        assert.equal(tokenName, result, 'name is wrong');
+    });
+
+    it('set symbol', async () => {
+        const result = await standardPauseableTokenInstance.symbol();
+        assert.equal(tokenSymbol, result, 'symbol is wrong');
+    });
+
+    it('set decimals', async () => {
+        const result = await standardPauseableTokenInstance.decimals();
+        assert.equal(tokenDecimals, result, 'decimals is wrong');
+    });
+
+    it('set totalSupply', async () => {
+        const result = await standardPauseableTokenInstance.totalSupply();
+        assert.equal(tokenTotalSupply, result, 'totalSupply is wrong');
+    });
+
+    it('transfer should throw if contract is paused', async () => {
+        await standardPauseableTokenInstance.pause({ from: ownerAddress });
+        
+        try {
+            await standardPauseableTokenInstance.transfer(address1, 1000, { from: ownerAddress });
+            assert(false,"Transfer accepted");
+        } catch (error) {
+            assert(true,"Transfer succeded while contract was paused");
+        }
+
+        await standardPauseableTokenInstance.unpause({ from: ownerAddress });
+    });
+
+    it('transfer should throw if to address is not valid', async () => {
+        
+        try {
+            await standardPauseableTokenInstance.transfer('0x0000000000000000000000000000000000000000', 1000, { from: ownerAddress });
+            assert(false,"Invalid address accepted");
+        } catch (error) {
+            assert(true,"Invalid address accepted");
+        }
+    });
+
+    it('transfer should throw if balance is insufficient', async () => {
+        
+    try {
+        await standardPauseableTokenInstance.transfer(ownerAddress, 1000, { from: address1 });
+        assert(false,"Insufficient balance accepted");
+    } catch (error) {
+        assert(true,"Insufficient balance accepted");
+    }
+        
+        
+    });
+
+    it('transfer success', async () => {
+        const result = await standardPauseableTokenInstance.transfer(address1, 1000, { from: ownerAddress });
+       
+        assert(result.logs[0].event == "Transfer", "Transfer event not emitted");
+    });
+
+    it('balanceOf success', async () => {
+        const result = await standardPauseableTokenInstance.balanceOf(ownerAddress, { from: ownerAddress });
+        
+        assert.equal(result.toNumber(), tokenTotalSupply-1000, 'balance is wrong'); //Since 1000 is transferred in the previous test
+    });
+
+    it('approve success', async () => {
+        const result = await standardPauseableTokenInstance.approve(address1, 1000, { from: ownerAddress });
+        
+        assert(result.logs[0].event == "Approval", "Approval event not emitted");
+    });
+
+    it('transferFrom should throw if contract is paused', async () => {
+        await standardPauseableTokenInstance.pause({ from: ownerAddress });
+        
+        try {
+            await standardPauseableTokenInstance.transferFrom(ownerAddress, address2, 1000, { from: address1 });
+            assert(false,"TransferFrom accepted");
+        } catch (error) {
+            assert(true,"TransferFrom succeded while contract was paused");
+        }
+
+        await standardPauseableTokenInstance.unpause({ from: ownerAddress });
+    });
+
+    it('transferFrom should throw if from address is not valid', async () => {
+        try {
+            await standardPauseableTokenInstance.transferFrom('0x0000000000000000000000000000000000000000', address1, 1000, { from: ownerAddress })
+            assert(false,"Invalid address accepted");
+        } catch (error) {
+            assert(true,"Invalid address accepted");
+        }
+    });
+
+    it('transferFrom should throw if to address is not valid', async () => {
+        try {
+            await standardPauseableTokenInstance.transferFrom(address1, '0x0000000000000000000000000000000000000000', 1000, { from: ownerAddress })
+            assert(false,"Invalid address accepted");
+        } catch (error) {
+            assert(true,"Invalid address accepted");
+        }
+    });
+
+    it('transferFrom should throw if balance is insufficient', async () => {
+        try {
+            await standardPauseableTokenInstance.transferFrom(address1, address2, 1000, { from: address1 })
+            assert(false,"Insufficient balance accepted");
+        } catch (error) {
+            assert(true,"Insufficient balance accepted");
+        }
+    });
+
+    it('transferFrom should throw if sender is not approved', async () => {
+        try {
+            await standardPauseableTokenInstance.transferFrom(ownerAddress, address1, 1000, { from: ownerAddress })
+            assert(false,"Sender is not approved");
+        } catch (error) {
+            assert(true,"Sender is not approved");
+        }
+    });
+
+    it('transferFrom success', async () => {
+        const result = await standardPauseableTokenInstance.transferFrom(ownerAddress, address2, 1000, { from: address1 });
+        assert(result.logs[1].event == "Transfer", "Transfer event not emitted");
+    });
+
+    it('not allowance', async () => {
+        const result = await standardPauseableTokenInstance.allowance(ownerAddress, address1, { from: ownerAddress });
+        
+        assert.equal(0, result.toNumber(), 'No Allowance test failed');
+    });
+
+    it('allowance', async () => {
+        const expectedAmount = 1000;
+        
+        await standardPauseableTokenInstance.approve(address1, expectedAmount, { from: ownerAddress });
+        const result = await standardPauseableTokenInstance.allowance(ownerAddress, address1, { from: ownerAddress });
+        
+        assert.equal(expectedAmount, result.toNumber(), 'Allowance test failed');
+    });
+
+    it('increaseApproval success', async () => {
+        const expectedAmount = 2000;
+        
+        const resultIncrease = await standardPauseableTokenInstance.increaseAllowance(address1, 1000, { from: ownerAddress });
+        const resultAfterIncrease = await standardPauseableTokenInstance.allowance(ownerAddress, address1, { from: ownerAddress });
+        
+        assert.equal(expectedAmount, resultAfterIncrease.toNumber(), 'wrong result after increase');
+        assert(resultIncrease.logs[0].event == "Approval", "Approval event not emitted");
+    });
+
+    it('decreaseApproval success', async () => {
+        const initialAmount = 2000;
+        const expectedAmount = 1000;
+        
+        const resultDecrease = await standardPauseableTokenInstance.decreaseAllowance(address1, 1000, { from: ownerAddress });
+        const resultAfterDecrease = await standardPauseableTokenInstance.allowance(ownerAddress, address1, { from: ownerAddress });
+        
+        assert.equal(expectedAmount, resultAfterDecrease.toNumber(), 'wrong result after increase');
+        assert(resultDecrease.logs[0].event == "Approval", "Approval event not emitted");
+    });
+
+    it('mint should throw if to address is invalid', async () => {
+        try {
+            await burnMintTokenInstance.mint('0x0000000000000000000000000000000000000000', 1000, { from: ownerAddress });
+            assert(false,"Invalid address accepted");
+        } catch (error) {
+            assert(true,"Invalid address accepted");
+        }
+    });
+
+    it('mintTo should throw if account is not a minter', async () => {
+        const mintValue = 1000;
+
+        try {
+            (await burnMintTokenInstance.mint(address1, mintValue, { from: address1 }))
+            assert(false,"Account is not a minter");
+        } catch (error) {
+            assert(true,"Account is not a minter");
+        }
+    });
+
+    it('mintTo success', async () => {
+        const mintValue = 500;
+
+        const resultBeforeMint = await burnMintTokenInstance.totalSupply();
+        const initialBalanceOf = await mintableTokenInstance.balanceOf(address1);
+        await burnMintTokenInstance.mint(address1, mintValue);
+        const expectedTotalSupply = resultBeforeMint.toNumber() + mintValue;
+        const resultAfterMint = await burnMintTokenInstance.totalSupply();
+        const resultBalanceOf = await burnMintTokenInstance.balanceOf(address1, { from: address1 });
+
+        assert.equal(tokenTotalSupply, resultBeforeMint, 'wrong totalSupply before');
+        assert.equal(expectedTotalSupply, resultAfterMint, 'wrong totalSupply after');
+        assert.equal(initialBalanceOf.toNumber() + mintValue, resultBalanceOf, 'wrong balance');
+    });
+
+    it('burn should throw if from address is invalid', async () => {
+        try {
+            await burnMintTokenInstance.burn('0x0000000000000000000000000000000000000000', 1000, { from: ownerAddress })
+            assert(false,"Invalid address accepted");
+        } catch (error) {
+            assert(true,"Invalid address accepted");
+        }
+    });
+
+    it('burn should throw if balance is insufficient', async () => {
+        try {
+            await burnMintTokenInstance.burn(1000, { from: accounts[3] })
+            assert(false,"Insufficient balance accepted");
+        } catch (error) {
+            assert(true,"Insufficient balance accepted");
+        }
+    });
+
+    it('burn success', async () => {
+        const burnValue = 500;
+        const initialBalanceOf = await burnMintTokenInstance.balanceOf(ownerAddress);
+        const initialsupply = await burnMintTokenInstance.totalSupply();
+        await burnMintTokenInstance.burn( burnValue, { from: ownerAddress });
+        const expectedTotalSupply = (initialsupply.toNumber()) - burnValue;
+        const resultAfterBurn = await burnMintTokenInstance.totalSupply();
+        const resultBalanceOf = await burnMintTokenInstance.balanceOf(ownerAddress);
+
+        assert.equal(expectedTotalSupply, resultAfterBurn, 'wrong totalSupply after');
+        assert.equal(initialBalanceOf - burnValue, resultBalanceOf, 'wrong balance after');
+    });
+
+})
+

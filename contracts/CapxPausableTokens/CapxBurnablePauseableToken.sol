@@ -405,4 +405,12 @@ contract CapxBurnablePauseableToken is IERC20, IERC20Metadata, Ownable, Pausable
         _spendAllowance(account, _msgSender(), amount);
         _burn(account, amount);
     }
+
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
+    }
 }
