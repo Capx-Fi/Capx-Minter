@@ -5,9 +5,6 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-interface ContractSample {
-    function symbol() view external returns (string memory);
-}
 abstract contract CapxToken {
     function initializer (
         string calldata name_, 
@@ -247,9 +244,9 @@ contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         uint256[5] calldata _parameters
     ) external virtual checkIsAddressValid(_address[0]) returns (address) {
         require(
-            (_reflectionType[3] && _address[2] != address(0)) // If Marketing then Marketing Address cannot be Zero.
+            (!_reflectionType[3] || _address[2] != address(0)) // If Marketing then Marketing Address cannot be Zero.
             && 
-            (_reflectionType[2] && _address[1] != address(0)) // If AutoLiquify then Router Address cannot be Zero.
+            (!_reflectionType[2] || _address[1] != address(0)) // If AutoLiquify then Router Address cannot be Zero.
             , "[Validation] Invalid Address"
         );
         uint256 _typeOfToken = _getTypeOfReflectionToken(_reflectionType);
@@ -284,10 +281,5 @@ contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
             )
             result := create(0, clone, 0x37)
         }
-    }
-
-    function checkCloneContractWorking(address _clone) public view returns (bool) {
-        ContractSample clone = ContractSample(_clone);
-        return bytes(clone.symbol()).length != 0;
     }
 }

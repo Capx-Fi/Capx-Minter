@@ -432,16 +432,16 @@ contract CapxDeflationaryToken is Ownable, IERC20, IERC20Metadata {
         _tFeeTotal = _tFeeTotal.add(tAmount);
     }
 
-    function reflectionFromToken(uint256 tAmount, bool deductTransferFee) public view returns(uint256) {
-        require(tAmount <= _tTotal, "Amount must be less than supply");
-        if (!deductTransferFee) {
-            (uint256 rAmount,,,,) = _getValues(tAmount);
-            return rAmount;
-        } else {
-            (,uint256 rTransferAmount,,,) = _getValues(tAmount);
-            return rTransferAmount;
-        }
-    }
+    // function reflectionFromToken(uint256 tAmount, bool deductTransferFee) public view returns(uint256) {
+    //     require(tAmount <= _tTotal, "Amount must be less than supply");
+    //     if (!deductTransferFee) {
+    //         (uint256 rAmount,,,,) = _getValues(tAmount);
+    //         return rAmount;
+    //     } else {
+    //         (,uint256 rTransferAmount,,,) = _getValues(tAmount);
+    //         return rTransferAmount;
+    //     }
+    // }
 
     function tokenFromReflection(uint256 rAmount) public view returns(uint256) {
         require(rAmount <= _rTotal, "Amount must be less than total reflections");
