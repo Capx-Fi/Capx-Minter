@@ -244,9 +244,9 @@ contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         uint256[5] calldata _parameters
     ) external virtual checkIsAddressValid(_address[0]) returns (address) {
         require(
-            (_reflectionType[3] && _address[2] != address(0)) // If Marketing then Marketing Address cannot be Zero.
+            (_reflectionType[3] || _address[2] != address(0)) // If Marketing then Marketing Address cannot be Zero.
             && 
-            (_reflectionType[2] && _address[1] != address(0)) // If AutoLiquify then Router Address cannot be Zero.
+            (_reflectionType[2] || _address[1] != address(0)) // If AutoLiquify then Router Address cannot be Zero.
             , "[Validation] Invalid Address"
         );
         uint256 _typeOfToken = _getTypeOfReflectionToken(_reflectionType);
