@@ -382,4 +382,26 @@ contract CapxStandardPauseableToken is IERC20, IERC20Metadata, Ownable, Pausable
         address to,
         uint256 amount
     ) internal virtual {}
+
+    /**
+     * @dev Triggers stopped state.
+     *
+     * Requirements:
+     *
+     * - The contract must not be paused.
+     */
+     function pause() external virtual whenNotPaused onlyOwner {
+         _pause();
+     }
+
+     /**
+     * @dev Returns to normal state.
+     *
+     * Requirements:
+     *
+     * - The contract must be paused.
+     */
+    function unpause() external virtual whenPaused onlyOwner {
+        _unpause();
+    }
 }

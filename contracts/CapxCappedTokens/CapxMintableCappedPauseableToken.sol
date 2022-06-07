@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 
 pragma solidity ^0.8.4;
 
-contract CapxMintablePauseableToken is IERC20, IERC20Metadata, Ownable, Pausable {
+contract CapxMintableCappedPauseableToken is IERC20, IERC20Metadata, Ownable, Pausable {
 
     modifier checkIsAddressValid(address _address)
     {
@@ -400,5 +400,27 @@ contract CapxMintablePauseableToken is IERC20, IERC20Metadata, Ownable, Pausable
      */
     function mint(address account, uint256 amount) external onlyOwner {
         _mint(account, amount);
+    }
+
+    /**
+     * @dev Triggers stopped state.
+     *
+     * Requirements:
+     *
+     * - The contract must not be paused.
+     */
+     function pause() external virtual whenNotPaused onlyOwner {
+         _pause();
+     }
+
+     /**
+     * @dev Returns to normal state.
+     *
+     * Requirements:
+     *
+     * - The contract must be paused.
+     */
+    function unpause() external virtual whenPaused onlyOwner {
+        _unpause();
     }
 }

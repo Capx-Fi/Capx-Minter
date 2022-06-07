@@ -43,19 +43,16 @@ contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     mapping(uint256 => address) public erc20Implementations;
     mapping(uint256 => address[]) public deployedContracts;
 
-    event newERC20Implementation (
+    event NewERC20Implementation (
         string typeOfToken,
         uint256 indexed typeID,
         address indexed implementation
     );
 
-    event newTokenDeployed (
-        string typeOfToken,
-        string indexed tokenName,
-        string indexed tokenSymbol,
+    event NewTokenDeployed (
+        uint256 tokenType,
         address indexed token,
-        address owner,
-        uint256 decimals
+        address owner
     );
 
     modifier checkIsAddressValid(address _address)
@@ -77,7 +74,7 @@ contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         __Ownable_init();
         typesOfToken = 1;
         erc20Implementations[typesOfToken] = _implementation;
-        emit newERC20Implementation(
+        emit NewERC20Implementation(
             "CapxStandardToken", 
             typesOfToken, 
             _implementation
@@ -87,7 +84,7 @@ contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     function addNewERC20Implementation(string calldata typeOfToken, address _implementation) checkIsAddressValid(_implementation) external virtual onlyOwner {
         typesOfToken += 1;
         erc20Implementations[typesOfToken] = _implementation;
-        emit newERC20Implementation(
+        emit NewERC20Implementation(
             typeOfToken, 
             typesOfToken, 
             _implementation);
@@ -183,13 +180,13 @@ contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         uint256 _initialSupply,
         uint256 _totalSupply,
         bool[4] calldata _features
-    ) external virtual returns (address) {
+    ) external virtual returns (address deployed) {
         // Validation
         require(_decimal >= 8 && _decimal <= 18, "[Validation] Invalid Decimal");
         require(_initialSupply > 0 && _totalSupply > 0 && _initialSupply <= _totalSupply, "[Validation] Invalid Supply");
         uint256 _typeOfToken = _getTypeOfToken(_features);
         assert(_typeOfToken != 0);
-        address deployed = create(erc20Implementations[_typeOfToken]);
+        deployed = create(erc20Implementations[_typeOfToken]);
         // Handling low level exception
         assert(deployed != address(0));
         // Initializing Deployed Token
@@ -211,6 +208,7 @@ contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
                 _initialSupply
             );
         }
+        emit NewTokenDeployed(_typeOfToken, deployed, _owner);
         return deployed;
     }
     /**
@@ -242,16 +240,16 @@ contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         address[3] calldata _address,
         bool[4] calldata _reflectionType,
         uint256[5] calldata _parameters
-    ) external virtual checkIsAddressValid(_address[0]) returns (address) {
+    ) external virtual checkIsAddressValid(_address[0]) returns (address deployed) {
         require(
-            (_reflectionType[3] && _address[2] != address(0)) // If Marketing then Marketing Address cannot be Zero.
+            (_reflectionType[3] || _address[2] != address(0)) // If Marketing then Marketing Address cannot be Zero.
             && 
-            (_reflectionType[2] && _address[1] != address(0)) // If AutoLiquify then Router Address cannot be Zero.
+            (_reflectionType[2] || _address[1] != address(0)) // If AutoLiquify then Router Address cannot be Zero.
             , "[Validation] Invalid Address"
         );
         uint256 _typeOfToken = _getTypeOfReflectionToken(_reflectionType);
         assert(_typeOfToken != 0);
-        address deployed = create(erc20Implementations[_typeOfToken]);
+        deployed = create(erc20Implementations[_typeOfToken]);
         // Handling low level exception
         assert(deployed != address(0));
         CapxReflectionToken(deployed).initializer(
@@ -262,6 +260,7 @@ contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
             _parameters,
             _address
         );
+        emit NewTokenDeployed(_typeOfToken, deployed, _address[0]);
         return deployed;
     }
 
