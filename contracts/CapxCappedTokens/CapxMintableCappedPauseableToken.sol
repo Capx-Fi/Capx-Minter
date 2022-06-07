@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 
 pragma solidity ^0.8.4;
 
-contract CapxMintablePauseableToken is IERC20, IERC20Metadata, Ownable, Pausable {
+contract CapxMintableCappedPauseableToken is IERC20, IERC20Metadata, Ownable, Pausable {
 
     modifier checkIsAddressValid(address _address)
     {
