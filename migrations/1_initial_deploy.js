@@ -21,6 +21,8 @@ const superDeflationaryToken = artifacts.require("CapxSuperDeflationaryToken");
 
 const factory = artifacts.require("CapxFactory");
 
+const routerAdd = "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45";
+
 const { deployProxy } = require("@openzeppelin/truffle-upgrades");
 
 module.exports = async function (deployer) {
@@ -99,90 +101,7 @@ module.exports = async function (deployer) {
     await console.log("CapxSuperDeflationaryToken Address " + CapxSuperDeflationaryToken.address);
 
     // Factory
-    let CapxFactory = await deployProxy(factory, [standardToken.address], { kind: 'uups' });
+    let CapxFactory = await deployProxy(factory, [standardToken.address, routerAdd], { kind: 'uups' });
     await console.log("CapxFactory Address " + CapxFactory.address);
 
-    // Standard Token
-    await CapxFactory.addNewERC20Implementation(
-        "CapxMintableToken",
-        CapxMintableToken.address
-    );
-
-    await CapxFactory.addNewERC20Implementation(
-        "CapxBurnableToken",
-        CapxBurnableToken.address
-    );
-
-    await CapxFactory.addNewERC20Implementation(
-        "CapxMintBurnToken",
-        CapxMintBurnToken.address
-    );
-
-    // Pauseable Token
-    await CapxFactory.addNewERC20Implementation(
-        "CapxStandardPauseableToken",
-        CapxStandardPauseableToken.address
-    );
-
-    await CapxFactory.addNewERC20Implementation(
-        "CapxMintablePauseableToken",
-        CapxMintablePauseableToken.address
-    );
-
-    await CapxFactory.addNewERC20Implementation(
-        "CapxBurnablePauseableToken",
-        CapxBurnablePauseableToken.address
-    );
-
-    await CapxFactory.addNewERC20Implementation(
-        "CapxMintBurnPauseableToken",
-        CapxMintBurnPauseableToken.address
-    );
-
-    // Capped Tokens
-    await CapxFactory.addNewERC20Implementation(
-        "CapxMintableCappedToken",
-        CapxMintableCappedToken.address
-    );
-
-    await CapxFactory.addNewERC20Implementation(
-        "CapxMintBurnCappedToken",
-        CapxMintBurnCappedToken.address
-    );
-
-    await CapxFactory.addNewERC20Implementation(
-        "CapxMintableCappedPauseableToken",
-        CapxMintableCappedPauseableToken.address
-    );
-
-    await CapxFactory.addNewERC20Implementation(
-        "CapxMintBurnCappedPauseableToken",
-        CapxMintBurnCappedPauseableToken.address
-    );
-
-    // Reflection Tokens
-    await CapxFactory.addNewERC20Implementation(
-        "CapxTaxableToken",
-        CapxTaxableToken.address
-    );
-
-    await CapxFactory.addNewERC20Implementation(
-        "CapxAutoLPTaxableToken",
-        CapxAutoLPTaxableToken.address
-    );
-
-    await CapxFactory.addNewERC20Implementation(
-        "CapxDeflationaryToken",
-        CapxDeflationaryToken.address
-    );
-
-    await CapxFactory.addNewERC20Implementation(
-        "CapxAutoLPDeflationaryToken",
-        CapxAutoLPDeflationaryToken.address
-    );
-
-    await CapxFactory.addNewERC20Implementation(
-        "CapxSuperDeflationaryToken",
-        CapxSuperDeflationaryToken.address
-    );
 };

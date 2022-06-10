@@ -42,17 +42,21 @@ contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     uint256 public typesOfToken;
     mapping(uint256 => address) public erc20Implementations;
     mapping(uint256 => address[]) public deployedContracts;
+    address public autoLPRouter;
 
     event NewERC20Implementation (
         string typeOfToken,
         uint256 indexed typeID,
-        address indexed implementation
+        address indexed implementation,
+        bool isReflective,
+        bool[4] features
     );
 
     event NewTokenDeployed (
         uint256 tokenType,
         address indexed token,
-        address owner
+        address owner,
+        uint256 documentHash
     );
 
     modifier checkIsAddressValid(address _address)
@@ -68,109 +72,88 @@ contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         onlyOwner
     {}
 
+    /**
+     * @param _implementation - Implementation address of the ERC20 Token
+    */
     function initialize (
-        address _implementation
-    ) public initializer {
+        address _implementation,
+        address _autoLPRouter
+    ) public initializer checkIsAddressValid(_autoLPRouter) checkIsAddressValid(_implementation) {
         __Ownable_init();
         typesOfToken = 1;
         erc20Implementations[typesOfToken] = _implementation;
+        autoLPRouter = _autoLPRouter;
         emit NewERC20Implementation(
             "CapxStandardToken", 
             typesOfToken, 
-            _implementation
+            _implementation,
+            false,
+            [false,false,false,false]
         );
     }
 
-    function addNewERC20Implementation(string calldata typeOfToken, address _implementation) checkIsAddressValid(_implementation) external virtual onlyOwner {
+    /**
+    * @param typeOfToken - Type of ERC20 Token
+    * @param _implementation - Implementation address of the ERC20 Token
+    * @param _isReflective - Boolean to determine type of ERC20 Token
+                [true] reflective
+                [false] non-reflective
+    * @param _features bool parameters
+            _isReflective -> [true]
+                [0] mintable flag, updatable by the owner after creation
+                [1] burnable flag, updatable by the owner after creation
+                [2] Pauseable flag, updatable by the owner after creation
+                [3] capped flag, updatable by the owner after creation
+            _isReflective -> [false]
+                [0] taxable flag on transfers, updatable by the owner after creation
+                [1] burnable flag on transfers, updatable by the owner after creation
+                [2] autoLiquify flag on transfers, updatable by the owner after creation
+                [3] marketing flag, updatable by the owner after creation
+    */
+    function addNewERC20Implementation(
+        string calldata typeOfToken, 
+        address _implementation,
+        bool _isReflective,
+        bool[4] calldata _features
+    ) checkIsAddressValid(_implementation) external virtual onlyOwner {
         typesOfToken += 1;
         erc20Implementations[typesOfToken] = _implementation;
         emit NewERC20Implementation(
             typeOfToken, 
             typesOfToken, 
-            _implementation);
+            _implementation,
+            _isReflective,
+            _features
+        );
     }
 
-    /**
-    * @param _features bool parameters:
-            [0] mintable flag, updatable by the owner after creation
-            [1] burnable flag, updatable by the owner after creation
-            [2] Pauseable flag, updatable by the owner after creation
-            [3] capped flag, updatable by the owner after creation
-    */
-    function _getTypeOfToken(bool[4] calldata _features) internal pure virtual returns (uint256 _typeOfToken) {
-        if(!_features[2]) {
-            if(_features[0] && _features[1] && !_features[3]) {
-                // MintBurnToken
-                _typeOfToken = 4; 
-            } else if(_features[0] && _features[1] && _features[3]) {
-                // MintBurnCappedToken
-                _typeOfToken = 10; 
-            }else if(_features[1]) {
-                // BurnableToken
-                _typeOfToken = 3;
-            } else if(_features[0] && !_features[3] ) {
-                // MintableToken
-                _typeOfToken = 2;
-            } else if(_features[0] && _features[3] ) {
-                // MintableCappedToken
-                _typeOfToken = 9;
-            } else {
-                // StandardToken
-                _typeOfToken = 1;
-            }
-        } else if (_features[2]){
-            if(_features[0]  && _features[1] && !_features[3]) {
-                // PauseableMintBurnToken
-                _typeOfToken = 8;
-            } else if(_features[0] && _features[1] && _features[3]) {
-                // PauseableMintBurnCappedToken
-                _typeOfToken = 12; 
-            } else if(_features[1]) {
-                // PauseableBurnToken
-                _typeOfToken = 7;
-            } else if(_features[0] && !_features[3] ) {
-                // PauseableMintToken
-                _typeOfToken = 6;
-            } else if(_features[0] && _features[3]) {
-                // PauseableMintCappedToken
-                _typeOfToken = 11;
-            } else {
-                // PauseableStandardToken
-                _typeOfToken = 5;
-            }
-        }
+    function updateAutoLPRouter(
+        address _autoLPRouter
+    ) checkIsAddressValid(_autoLPRouter) external virtual onlyOwner {
+        autoLPRouter = _autoLPRouter;
     }
 
-    function _getTypeOfReflectionToken(bool[4] calldata _reflectionType) internal pure virtual returns (uint256 _typeOfToken) {
-        if(_reflectionType[0] && _reflectionType[1] && _reflectionType[2] && _reflectionType[3]){
-            // SuperDefaltionaryToken
-            _typeOfToken = 17;
-        } else if (_reflectionType[0] && _reflectionType[1] && _reflectionType[2] && !_reflectionType[3]) {
-            // AutoLPDeflationaryToken
-            _typeOfToken = 16;
-        } else if (_reflectionType[0] && _reflectionType[1] && !_reflectionType[2] && !_reflectionType[3]){
-            // DefaltionaryToken
-            _typeOfToken = 15;
-        } else if (_reflectionType[0] && !_reflectionType[1] && _reflectionType[2] && !_reflectionType[3]) {
-            // AutoLPTaxableToken
-            _typeOfToken = 14;
-        } else if (_reflectionType[0] && !_reflectionType[1] && !_reflectionType[2] && !_reflectionType[3]) {
-            // Taxable Tolen
-            _typeOfToken = 13;
-        }
-    }
     /**
     * @param _name Token Name
     * @param _symbol Token Symbol
-    * @param _decimal Token Decimal.
     * @param _owner Token Owner.
+    * @param _decimal Token Decimal.
     * @param _initialSupply Token Supply minted at the time of creation
     * @param _totalSupply Maximum Token Supply.
-    * @param _features bool parameters:
-            [0] mintable flag, updatable by the owner after creation
-            [1] burnable flag, updatable by the owner after creation
-            [2] Pauseable flag, updatable by the owner after creation
-            [3] capped flag, updatable by the owner after creation
+    * @param _documentHash IPFS hash storing Token details.
+    * @param _typeOfToken uint256 type of token between the range 1 - 12
+            [1] Standard Token
+            [2] Mintable Token
+            [3] Burnable Token
+            [4] Mintable & Burnable Token
+            [5] Pauseable Standard Token
+            [6] Pauseable Mintable Token
+            [7] Pauseable Burnable Token
+            [8] Pauseable Mintable & Burnable Token
+            [9] Mintable & Capped Token
+            [10] Mintable & Burnable & Capped Token
+            [11] Pauseable Mintable & Capped Token
+            [12] Pauseable Mintable & Burnable & Capped Token
     */
     function createToken(
         string calldata _name,
@@ -179,18 +162,18 @@ contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         uint8 _decimal,
         uint256 _initialSupply,
         uint256 _totalSupply,
-        bool[4] calldata _features
+        uint256 _typeOfToken,
+        uint256 _documentHash
     ) external virtual returns (address deployed) {
         // Validation
         require(_decimal >= 8 && _decimal <= 18, "[Validation] Invalid Decimal");
         require(_initialSupply > 0 && _totalSupply > 0 && _initialSupply <= _totalSupply, "[Validation] Invalid Supply");
-        uint256 _typeOfToken = _getTypeOfToken(_features);
-        assert(_typeOfToken != 0);
+        require(_typeOfToken != 0, "Invalid Token Type");
         deployed = create(erc20Implementations[_typeOfToken]);
         // Handling low level exception
         assert(deployed != address(0));
         // Initializing Deployed Token
-        if(_features[3]){
+        if(_typeOfToken >=9 && _typeOfToken <= 12 ){
             CapxCappedToken(deployed).initializer(
                 _name,
                 _symbol,
@@ -208,29 +191,34 @@ contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
                 _initialSupply
             );
         }
-        emit NewTokenDeployed(_typeOfToken, deployed, _owner);
+        // Updating the mapping with the deployed token for the type of Token
+        deployedContracts[_typeOfToken].push(deployed);
+        emit NewTokenDeployed(_typeOfToken, deployed, _owner,_documentHash);
         return deployed;
     }
+    
     /**
     * @param _name Token Name
     * @param _symbol Token Symbol
     * @param _decimal Token Decimal.
     * @param _supply Token Supply
+    * @param _documentHash IPFS hash storing Token details.
     * @param _address address parameters:
                     [0] owner, receives totalSupply and controls the parameters
                     [1] Uniswap-like (or) Pancake-like router for autoLiquify on transfers, must have WETH() function
                     [2] marketingAddress, only if _reflectionType[3] is set
-    * @param _reflectionType bool parameters:
-                    [0] taxable flag on transfers, updatable by the owner after creation
-                    [1] burnable flag on transfers, updatable by the owner after creation
-                    [2] autoLiquify flag on transfers, updatable by the owner after creation
-                    [3] marketing flag, updatable by the owner after creation
     * @param _parameters address parameters:
                     [0] taxFee on transfers, updatable by the owner after creation
                     [1] burnFee on transfers, only if _reflectionType[1] is set
                     [2] liquidityFee on transfers, only if _reflectionType[2] is set
                     [3] marketingFee on transfers, only if _reflectionType[3] is set
                     [4] liquidityThreshold, min amount of tokens to be swapped on transfers, only if _reflectionType[2] is set.
+    * @param _typeOfToken uint256 type of token between the range 13 - 17 :
+                    [13] Taxable Token
+                    [14] AutoLPTaxable Token
+                    [15] Defaltionary Token
+                    [16] AutoLPDefaltionary Token
+                    [17] SuperDefaltionary Token
     */
     function createReflectiveToken(
         string calldata _name,
@@ -238,17 +226,17 @@ contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         uint8 _decimal,
         uint256 _supply,
         address[3] calldata _address,
-        bool[4] calldata _reflectionType,
-        uint256[5] calldata _parameters
+        uint256[5] calldata _parameters,
+        uint256 _typeOfToken,
+        uint256 _documentHash
     ) external virtual checkIsAddressValid(_address[0]) returns (address deployed) {
         require(
-            (_reflectionType[3] || _address[2] != address(0)) // If Marketing then Marketing Address cannot be Zero.
+            (_typeOfToken == 17 || _address[2] != address(0)) // If Marketing then Marketing Address cannot be Zero.
             && 
-            (_reflectionType[2] || _address[1] != address(0)) // If AutoLiquify then Router Address cannot be Zero.
+            (_typeOfToken == 14 || _typeOfToken == 16 || _address[1] != address(0)) // If AutoLiquify then Router Address cannot be Zero.
             , "[Validation] Invalid Address"
         );
-        uint256 _typeOfToken = _getTypeOfReflectionToken(_reflectionType);
-        assert(_typeOfToken != 0);
+        require(_typeOfToken != 0, "Invalid Token Type");
         deployed = create(erc20Implementations[_typeOfToken]);
         // Handling low level exception
         assert(deployed != address(0));
@@ -260,7 +248,9 @@ contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
             _parameters,
             _address
         );
-        emit NewTokenDeployed(_typeOfToken, deployed, _address[0]);
+        // Updating the mapping with the deployed token for the type of Token
+        deployedContracts[_typeOfToken].push(deployed);
+        emit NewTokenDeployed(_typeOfToken, deployed, _address[0],_documentHash);
         return deployed;
     }
 
