@@ -99,12 +99,12 @@ contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
                 [true] reflective
                 [false] non-reflective
     * @param _features bool parameters
-            _isReflective -> [true]
+            _isReflective -> [false]
                 [0] mintable flag, updatable by the owner after creation
                 [1] burnable flag, updatable by the owner after creation
                 [2] Pauseable flag, updatable by the owner after creation
                 [3] capped flag, updatable by the owner after creation
-            _isReflective -> [false]
+            _isReflective -> [true]
                 [0] taxable flag on transfers, updatable by the owner after creation
                 [1] burnable flag on transfers, updatable by the owner after creation
                 [2] autoLiquify flag on transfers, updatable by the owner after creation
