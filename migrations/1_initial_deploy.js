@@ -104,4 +104,118 @@ module.exports = async function (deployer) {
     let CapxFactory = await deployProxy(factory, [standardToken.address, routerAdd], { kind: 'uups' });
     await console.log("CapxFactory Address " + CapxFactory.address);
 
+    await CapxFactory.addNewERC20Implementation(
+        "CapxMintableToken",
+        CapxMintableToken.address,
+        false,
+        [true,false,false,false]
+    );
+
+    await CapxFactory.addNewERC20Implementation(
+        "CapxBurnableToken",
+        CapxBurnableToken.address,
+        false,
+        [false,true,false,false]
+    );
+
+    await CapxFactory.addNewERC20Implementation(
+        "CapxMintBurnToken",
+        CapxMintBurnToken.address,
+        false,
+        [true,true,false,false]
+    );
+
+    // Pauseable Token
+    await CapxFactory.addNewERC20Implementation(
+        "CapxStandardPauseableToken",
+        CapxStandardPauseableToken.address,
+        false,
+        [false,false,true,false]
+    );
+
+    await CapxFactory.addNewERC20Implementation(
+        "CapxMintablePauseableToken",
+        CapxMintablePauseableToken.address,
+        false,
+        [true,false,true,false]
+    );
+
+    await CapxFactory.addNewERC20Implementation(
+        "CapxBurnablePauseableToken",
+        CapxBurnablePauseableToken.address,
+        false,
+        [false,true,true,false]
+    );
+
+    await CapxFactory.addNewERC20Implementation(
+        "CapxMintBurnPauseableToken",
+        CapxMintBurnPauseableToken.address,
+        false,
+        [true,true,true,false]
+    );
+
+    // Capped Tokens
+    await CapxFactory.addNewERC20Implementation(
+        "CapxMintableCappedToken",
+        CapxMintableCappedToken.address,
+        false,
+        [true,false,false,true]
+    );
+
+    await CapxFactory.addNewERC20Implementation(
+        "CapxMintBurnCappedToken",
+        CapxMintBurnCappedToken.address,
+        false,
+        [true,true,false,true]
+    );
+
+    await CapxFactory.addNewERC20Implementation(
+        "CapxMintableCappedPauseableToken",
+        CapxMintableCappedPauseableToken.address,
+        false,
+        [true,false,true,true]
+    );
+
+    await CapxFactory.addNewERC20Implementation(
+        "CapxMintBurnCappedPauseableToken",
+        CapxMintBurnCappedPauseableToken.address,
+        false,
+        [true,true,true,true]
+    );
+
+    // Reflection Tokens
+    await CapxFactory.addNewERC20Implementation(
+        "CapxTaxableToken",
+        CapxTaxableToken.address,
+        true,
+        [true,false,false,false]
+    );
+
+    await CapxFactory.addNewERC20Implementation(
+        "CapxAutoLPTaxableToken",
+        CapxAutoLPTaxableToken.address,
+        true,
+        [true,false,true,false]
+    );
+
+    await CapxFactory.addNewERC20Implementation(
+        "CapxDeflationaryToken",
+        CapxDeflationaryToken.address,
+        true,
+        [true,true,false,false]
+    );
+
+    await CapxFactory.addNewERC20Implementation(
+        "CapxAutoLPDeflationaryToken",
+        CapxAutoLPDeflationaryToken.address,
+        true,
+        [true,true,true,false]
+    );
+
+    await CapxFactory.addNewERC20Implementation(
+        "CapxSuperDeflationaryToken",
+        CapxSuperDeflationaryToken.address,
+        true,
+        [true,true,true,true]
+    );
 };
