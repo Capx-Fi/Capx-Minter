@@ -14,14 +14,14 @@ const mintCappedPauseableToken = artifacts.require("CapxMintableCappedPauseableT
 const mintBurnCappedPauseableToken = artifacts.require("CapxMintBurnCappedPauseableToken");
 
 const taxableToken = artifacts.require("CapxTaxableToken");
-const autoLPTaxableToken = artifacts.require("CapxAutoLPTaxableToken");
+// const autoLPTaxableToken = artifacts.require("CapxAutoLPTaxableToken");
 const deflationaryToken = artifacts.require("CapxDeflationaryToken");
-const autoLPDeflationaryToken = artifacts.require("CapxAutoLPDeflationaryToken");
-const superDeflationaryToken = artifacts.require("CapxSuperDeflationaryToken");
+// const autoLPDeflationaryToken = artifacts.require("CapxAutoLPDeflationaryToken");
+// const superDeflationaryToken = artifacts.require("CapxSuperDeflationaryToken");
 
 const factory = artifacts.require("CapxFactory");
 
-const routerAdd = "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45";
+const routerAdd = "0x0000000000000000000000000000000000000000";
 
 const { deployProxy } = require("@openzeppelin/truffle-upgrades");
 
@@ -84,21 +84,21 @@ module.exports = async function (deployer) {
     let CapxTaxableToken = await deployer.deploy(taxableToken);
     await console.log("CapxTaxableToken Address " + CapxTaxableToken.address);
 
-    await console.log("Deploying CapxAutoLPTaxableToken Contract");
-    let CapxAutoLPTaxableToken = await deployer.deploy(autoLPTaxableToken);
-    await console.log("CapxAutoLPTaxableToken Address " + CapxAutoLPTaxableToken.address);
+    // await console.log("Deploying CapxAutoLPTaxableToken Contract");
+    // let CapxAutoLPTaxableToken = await deployer.deploy(autoLPTaxableToken);
+    // await console.log("CapxAutoLPTaxableToken Address " + CapxAutoLPTaxableToken.address);
 
     await console.log("Deploying CapxDeflationaryToken Contract");
     let CapxDeflationaryToken = await deployer.deploy(deflationaryToken);
     await console.log("CapxDeflationaryToken Address " + CapxDeflationaryToken.address);
 
-    await console.log("Deploying CapxAutoLPDeflationaryToken Contract");
-    let CapxAutoLPDeflationaryToken = await deployer.deploy(autoLPDeflationaryToken);
-    await console.log("CapxAutoLPDeflationaryToken Address " + CapxAutoLPDeflationaryToken.address);
+    // await console.log("Deploying CapxAutoLPDeflationaryToken Contract");
+    // let CapxAutoLPDeflationaryToken = await deployer.deploy(autoLPDeflationaryToken);
+    // await console.log("CapxAutoLPDeflationaryToken Address " + CapxAutoLPDeflationaryToken.address);
 
-    await console.log("Deploying CapxSuperDeflationaryToken Contract");
-    let CapxSuperDeflationaryToken = await deployer.deploy(superDeflationaryToken);
-    await console.log("CapxSuperDeflationaryToken Address " + CapxSuperDeflationaryToken.address);
+    // await console.log("Deploying CapxSuperDeflationaryToken Contract");
+    // let CapxSuperDeflationaryToken = await deployer.deploy(superDeflationaryToken);
+    // await console.log("CapxSuperDeflationaryToken Address " + CapxSuperDeflationaryToken.address);
 
     // Factory
     let CapxFactory = await deployProxy(factory, [standardToken.address, routerAdd], { kind: 'uups' });
@@ -191,12 +191,12 @@ module.exports = async function (deployer) {
         [true,false,false,false]
     );
 
-    await CapxFactory.addNewERC20Implementation(
-        "CapxAutoLPTaxableToken",
-        CapxAutoLPTaxableToken.address,
-        true,
-        [true,false,true,false]
-    );
+    // await CapxFactory.addNewERC20Implementation(
+    //     "CapxAutoLPTaxableToken",
+    //     CapxAutoLPTaxableToken.address,
+    //     true,
+    //     [true,false,true,false]
+    // );
 
     await CapxFactory.addNewERC20Implementation(
         "CapxDeflationaryToken",
@@ -205,17 +205,17 @@ module.exports = async function (deployer) {
         [true,true,false,false]
     );
 
-    await CapxFactory.addNewERC20Implementation(
-        "CapxAutoLPDeflationaryToken",
-        CapxAutoLPDeflationaryToken.address,
-        true,
-        [true,true,true,false]
-    );
+    // await CapxFactory.addNewERC20Implementation(
+    //     "CapxAutoLPDeflationaryToken",
+    //     CapxAutoLPDeflationaryToken.address,
+    //     true,
+    //     [true,true,true,false]
+    // );
 
-    await CapxFactory.addNewERC20Implementation(
-        "CapxSuperDeflationaryToken",
-        CapxSuperDeflationaryToken.address,
-        true,
-        [true,true,true,true]
-    );
+    // await CapxFactory.addNewERC20Implementation(
+    //     "CapxSuperDeflationaryToken",
+    //     CapxSuperDeflationaryToken.address,
+    //     true,
+    //     [true,true,true,true]
+    // );
 };

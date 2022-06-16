@@ -65,10 +65,10 @@ contract("Testing token workings" , async (accounts) => {
         mintBurnCappedPauseableTokenInstance = await mintBurnCappedPauseableToken.deployed();
 
         taxableTokenInstance = await taxableToken.deployed();
-        autoLPTaxableTokenInstance = await autoLPTaxableToken.deployed();
+        // autoLPTaxableTokenInstance = await autoLPTaxableToken.deployed();
         deflationaryTokenInstance = await deflationaryToken.deployed();
-        autoLPDeflationaryTokenInstance = await autoLPDeflationaryToken.deployed();
-        superDeflationaryTokenInstance = await superDeflationaryToken.deployed();
+        // autoLPDeflationaryTokenInstance = await autoLPDeflationaryToken.deployed();
+        // superDeflationaryTokenInstance = await superDeflationaryToken.deployed();
 
         assert(factoryInstance.address != undefined, "Factory contract address is undefined");
         assert(standardTokenInstance.address != undefined, "token address is undefined");
@@ -87,10 +87,10 @@ contract("Testing token workings" , async (accounts) => {
         assert(mintBurnCappedPauseableTokenInstance.address != undefined, "MintBurnCapped pauseable token address is undefined");
 
         assert(taxableTokenInstance.address != undefined, "Taxable token address is undefined");
-        assert(autoLPTaxableTokenInstance.address != undefined, "AutoLPTaxable token address is undefined");
+        // assert(autoLPTaxableTokenInstance.address != undefined, "AutoLPTaxable token address is undefined");
         assert(deflationaryTokenInstance.address != undefined, "Deflationary token address is undefined");
-        assert(autoLPDeflationaryTokenInstance.address != undefined, "AutoLPDeflationary token address is undefined");
-        assert(superDeflationaryTokenInstance.address != undefined, "SuperDeflationary token address is undefined");
+        // assert(autoLPDeflationaryTokenInstance.address != undefined, "AutoLPDeflationary token address is undefined");
+        // assert(superDeflationaryTokenInstance.address != undefined, "SuperDeflationary token address is undefined");
     });
 });
 
