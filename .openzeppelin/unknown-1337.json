@@ -1,0 +1,131 @@
+{
+  "manifestVersion": "3.2",
+  "proxies": [
+    {
+      "address": "0xdb9Ab9D3306a437eFCa3dEc5350a09E8a37c29cc",
+      "txHash": "0x9dd16461c324557706510f154d9aed9b333fcd4cdd86cfc3754f825e7ac501f4",
+      "kind": "uups"
+    },
+    {
+      "address": "0xC7601430a884470408E95B7BbCA712ca22C31DDb",
+      "txHash": "0xc94654bc2fcbf764bc0f3b703950b72256a5652bf1ffd2ba4c36c479f8999ee7",
+      "kind": "uups"
+    },
+    {
+      "address": "0xb0f9bBD558E63A86167A291bfa9a0f629c96e324",
+      "txHash": "0x436ac779cb33a394e445b71c1d562eff57f44e36cfb7aadd9262f3dfed726f04",
+      "kind": "uups"
+    },
+    {
+      "address": "0x61beCBee92eD7AC534CEEAdC640c9f6ae3da7DF1",
+      "txHash": "0xf88f8702af92bd39f5f7ebdf472d1d6528818d543558fc9e57fc1a34f7ff9fa6",
+      "kind": "uups"
+    }
+  ],
+  "impls": {
+    "8359b863ca0f78971034fc27a8c58ca35fa2341cc0c87f7eab3b8f99c0f710f7": {
+      "address": "0xFd8e45c209a72745C29F70538A9611238dDFD4c3",
+      "txHash": "0x0eef1a5dfa0e93c70929f74670d253be7561a17c088e3425bd861feb670b84c5",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_uint8",
+            "src": "../@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "../@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "contract": "ERC1967UpgradeUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "../@openzeppelin/contracts-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol:211"
+          },
+          {
+            "contract": "UUPSUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "../@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol:107"
+          },
+          {
+            "contract": "ContextUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "../@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "_owner",
+            "type": "t_address",
+            "src": "../@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "../@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:87"
+          },
+          {
+            "contract": "CapxFactory",
+            "label": "typesOfToken",
+            "type": "t_uint256",
+            "src": "../project:/contracts/CapxFactory.sol:42"
+          },
+          {
+            "contract": "CapxFactory",
+            "label": "erc20Implementations",
+            "type": "t_mapping(t_uint256,t_address)",
+            "src": "../project:/contracts/CapxFactory.sol:43"
+          },
+          {
+            "contract": "CapxFactory",
+            "label": "deployedContracts",
+            "type": "t_mapping(t_uint256,t_array(t_address)dyn_storage)",
+            "src": "../project:/contracts/CapxFactory.sol:44"
+          },
+          {
+            "contract": "CapxFactory",
+            "label": "autoLPRouter",
+            "type": "t_address",
+            "src": "../project:/contracts/CapxFactory.sol:45"
+          }
+        ],
+        "types": {
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_mapping(t_uint256,t_address)": {
+            "label": "mapping(uint256 => address)"
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_mapping(t_uint256,t_array(t_address)dyn_storage)": {
+            "label": "mapping(uint256 => address[])"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          },
+          "t_uint8": {
+            "label": "uint8"
+          },
+          "t_bool": {
+            "label": "bool"
+          }
+        }
+      }
+    }
+  }
+}

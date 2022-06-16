@@ -55,7 +55,6 @@ contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     event NewTokenDeployed (
         uint256 tokenType,
         address indexed token,
-        address owner,
         uint256 documentHash
     );
 
@@ -193,7 +192,7 @@ contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         }
         // Updating the mapping with the deployed token for the type of Token
         deployedContracts[_typeOfToken].push(deployed);
-        emit NewTokenDeployed(_typeOfToken, deployed, _owner,_documentHash);
+        emit NewTokenDeployed(_typeOfToken, deployed,_documentHash);
         return deployed;
     }
     
@@ -250,7 +249,7 @@ contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         );
         // Updating the mapping with the deployed token for the type of Token
         deployedContracts[_typeOfToken].push(deployed);
-        emit NewTokenDeployed(_typeOfToken, deployed, _address[0],_documentHash);
+        emit NewTokenDeployed(_typeOfToken, deployed,_documentHash);
         return deployed;
     }
 
