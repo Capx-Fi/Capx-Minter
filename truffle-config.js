@@ -20,8 +20,8 @@
 
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 const mnemonic =  require("./secrets.json").mnemonic;
-const goerlirpc = require("./secrets.json").goerlirpc;
-// const mumbairpc = require("./secrets.json").mumbairpc;
+// const goerlirpc = require("./secrets.json").goerlirpc;
+const mumbairpc = require("./secrets.json").mumbairpc;
 // const fujirpc = require("./secrets.json").fujirpc;
 // const bsctestrpc = require("./secrets.json").bsctestrpc;
 
@@ -57,32 +57,32 @@ module.exports = {
     // from: <address>,        // Account to send txs from (default: accounts[0])
     // websocket: true        // Enable EventEmitter interface for web3 (default: false)
     // },
-    goerli: {
-      provider: () => new HDWalletProvider({
-        mnemonic : {
-          "phrase" : mnemonic,
-        },
-        providerOrUrl : goerlirpc,
-      }),
-      network_id: '5', // eslint-disable-line camelcase
-      gas: 5500000,
-      confirmations: 0, // # of confs to wait between deployments. (default: 0)
-      timeoutBlocks: 200, // # of blocks before a deployment times out  (minimum/default: 50)
-      skipDryRun: true // Skip dry run before migrations? (default: false for public nets )
-    },
-    // mumbai: {
+    // goerli: {
     //   provider: () => new HDWalletProvider({
     //     mnemonic : {
     //       "phrase" : mnemonic,
     //     },
-    //     providerOrUrl : mumbairpc,
+    //     providerOrUrl : goerlirpc,
     //   }),
-    //   network_id: 80001,       // Ropsten's id
-    //   gas: 5500000,        // Ropsten has a lower block limit than mainnet
-    //   confirmations: 0,    // # of confs to wait between deployments. (default: 0)
-    //   timeoutBlocks: 400000,  // # of blocks before a deployment times out  (minimum/default: 50)
-    //   skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
+    //   network_id: '5', // eslint-disable-line camelcase
+    //   gas: 5500000,
+    //   confirmations: 0, // # of confs to wait between deployments. (default: 0)
+    //   timeoutBlocks: 200, // # of blocks before a deployment times out  (minimum/default: 50)
+    //   skipDryRun: true // Skip dry run before migrations? (default: false for public nets )
     // },
+    mumbai: {
+      provider: () => new HDWalletProvider({
+        mnemonic : {
+          "phrase" : mnemonic,
+        },
+        providerOrUrl : mumbairpc,
+      }),
+      network_id: 80001,       // Ropsten's id
+      gas: 5500000,        // Ropsten has a lower block limit than mainnet
+      confirmations: 0,    // # of confs to wait between deployments. (default: 0)
+      timeoutBlocks: 400000,  // # of blocks before a deployment times out  (minimum/default: 50)
+      skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
+    },
     // fuji: {
     //   provider: () => new HDWalletProvider({
     //     mnemonic : {
