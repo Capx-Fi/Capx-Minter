@@ -69,6 +69,14 @@ module.exports = {
       timeoutBlocks: 200, // # of blocks before a deployment times out  (minimum/default: 50)
       skipDryRun: true // Skip dry run before migrations? (default: false for public nets )
     },
+    mandala: {
+      provider: () => new HDWalletProvider(mnemonic, 'https://tc7-eth.aca-dev.network'),
+      network_id: 595,
+      gasPrice: 0x2f3f5603ea, // storage_limit = 64001, validUntil = 360001, gasLimit = 10000000
+      gas: 0x329b140,
+      timeoutBlocks: 25,
+      confirmations: 0
+    },
     // Useful for deploying to a public network.
     // NB: It's important to wrap the provider as a function.
     // ropsten: {
