@@ -3,7 +3,7 @@ const standardToken = artifacts.require("CapxStandardToken")
 
 const factory = artifacts.require("CapxFactory");
 
-const routerAdd = "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff";
+const routerAdd = "0x0000000000000000000000000000000000000001";
 
 const { deployProxy } = require("@openzeppelin/truffle-upgrades");
 

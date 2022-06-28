@@ -26,17 +26,17 @@ module.exports = async function (deployer) {
         };
     }
 
-    try {
-        CapxAutoLPTaxableToken = await autoLPTaxableToken.deployed();
-    } catch (error) {
-        if (error.message == "CapxAutoLPTaxableToken has not been deployed to detected network (network/artifact mismatch)") {
-            await console.log("Deploying CapxAutoLPTaxableToken Contract");
-            CapxAutoLPTaxableToken = await deployer.deploy(autoLPTaxableToken);
-            await console.log("CapxAutoLPTaxableToken Address " + CapxAutoLPTaxableToken.address);
-        } else {
-            console.error(error);
-        };
-    }
+    // try {
+    //     CapxAutoLPTaxableToken = await autoLPTaxableToken.deployed();
+    // } catch (error) {
+    //     if (error.message == "CapxAutoLPTaxableToken has not been deployed to detected network (network/artifact mismatch)") {
+    //         await console.log("Deploying CapxAutoLPTaxableToken Contract");
+    //         CapxAutoLPTaxableToken = await deployer.deploy(autoLPTaxableToken);
+    //         await console.log("CapxAutoLPTaxableToken Address " + CapxAutoLPTaxableToken.address);
+    //     } else {
+    //         console.error(error);
+    //     };
+    // }
 
     try {
         CapxDeflationaryToken = await deflationaryToken.deployed();
@@ -50,29 +50,29 @@ module.exports = async function (deployer) {
         };
     }
 
-    try {
-        CapxAutoLPDeflationaryToken = await autoLPDeflationaryToken.deployed();
-    } catch (error) {
-        if (error.message == "CapxAutoLPDeflationaryToken has not been deployed to detected network (network/artifact mismatch)") {
-            await console.log("Deploying CapxAutoLPDeflationaryToken Contract");
-            CapxAutoLPDeflationaryToken = await deployer.deploy(autoLPDeflationaryToken);
-            await console.log("CapxAutoLPDeflationaryToken Address " + CapxAutoLPDeflationaryToken.address);
-        } else {
-            console.error(error);
-        };
-    }
+    // try {
+    //     CapxAutoLPDeflationaryToken = await autoLPDeflationaryToken.deployed();
+    // } catch (error) {
+    //     if (error.message == "CapxAutoLPDeflationaryToken has not been deployed to detected network (network/artifact mismatch)") {
+    //         await console.log("Deploying CapxAutoLPDeflationaryToken Contract");
+    //         CapxAutoLPDeflationaryToken = await deployer.deploy(autoLPDeflationaryToken);
+    //         await console.log("CapxAutoLPDeflationaryToken Address " + CapxAutoLPDeflationaryToken.address);
+    //     } else {
+    //         console.error(error);
+    //     };
+    // }
 
-    try {
-        CapxSuperDeflationaryToken = await superDeflationaryToken.deployed();
-    } catch (error) {
-        if (error.message == "CapxSuperDeflationaryToken has not been deployed to detected network (network/artifact mismatch)") {
-            await console.log("Deploying CapxSuperDeflationaryToken Contract");
-            CapxSuperDeflationaryToken = await deployer.deploy(superDeflationaryToken);
-            await console.log("CapxSuperDeflationaryToken Address " + CapxSuperDeflationaryToken.address);
-        } else {
-            console.error(error);
-        };
-    }
+    // try {
+    //     CapxSuperDeflationaryToken = await superDeflationaryToken.deployed();
+    // } catch (error) {
+    //     if (error.message == "CapxSuperDeflationaryToken has not been deployed to detected network (network/artifact mismatch)") {
+    //         await console.log("Deploying CapxSuperDeflationaryToken Contract");
+    //         CapxSuperDeflationaryToken = await deployer.deploy(superDeflationaryToken);
+    //         await console.log("CapxSuperDeflationaryToken Address " + CapxSuperDeflationaryToken.address);
+    //     } else {
+    //         console.error(error);
+    //     };
+    // }
 
     let CapxFactory = await factory.deployed();
     const result = await CapxFactory.typesOfToken();
@@ -90,18 +90,18 @@ module.exports = async function (deployer) {
     typesOfToken += 1;
     }
 
-    if (typesOfToken == 13) {
-    console.log("Implementing CapxAutoLPTaxableToken Contract");
-    await CapxFactory.addNewERC20Implementation(
-        "AutoLP Taxable Token",
-        CapxAutoLPTaxableToken.address,
-        true,
-        [true,false,true,false]
-    );
-    typesOfToken += 1;
-    }
+    // if (typesOfToken == 13) {
+    // console.log("Implementing CapxAutoLPTaxableToken Contract");
+    // await CapxFactory.addNewERC20Implementation(
+    //     "AutoLP Taxable Token",
+    //     CapxAutoLPTaxableToken.address,
+    //     true,
+    //     [true,false,true,false]
+    // );
+    // typesOfToken += 1;
+    // }
 
-    if (typesOfToken == 14) {
+    if (typesOfToken == 13) {
     console.log("Implementing CapxDeflationaryToken Contract");
     await CapxFactory.addNewERC20Implementation(
         "Deflationary Token",
@@ -112,27 +112,27 @@ module.exports = async function (deployer) {
     typesOfToken += 1;
     }
 
-    if (typesOfToken == 15) {
-    console.log("Implementing CapxAutoLPDeflationaryToken Contract");
-    await CapxFactory.addNewERC20Implementation(
-        "AutoLP Deflationary Token",
-        CapxAutoLPDeflationaryToken.address,
-        true,
-        [true,true,true,false]
-    );
-    typesOfToken += 1;
-    }
+    // if (typesOfToken == 15) {
+    // console.log("Implementing CapxAutoLPDeflationaryToken Contract");
+    // await CapxFactory.addNewERC20Implementation(
+    //     "AutoLP Deflationary Token",
+    //     CapxAutoLPDeflationaryToken.address,
+    //     true,
+    //     [true,true,true,false]
+    // );
+    // typesOfToken += 1;
+    // }
 
-    if (typesOfToken == 16) {
-    console.log("Implementing CapxSuperDeflationaryToken Contract");
-    await CapxFactory.addNewERC20Implementation(
-        "Super Deflationary Token",
-        CapxSuperDeflationaryToken.address,
-        true,
-        [true,true,true,true]
-    );
-    typesOfToken += 1;
-    }
+    // if (typesOfToken == 16) {
+    // console.log("Implementing CapxSuperDeflationaryToken Contract");
+    // await CapxFactory.addNewERC20Implementation(
+    //     "Super Deflationary Token",
+    //     CapxSuperDeflationaryToken.address,
+    //     true,
+    //     [true,true,true,true]
+    // );
+    // typesOfToken += 1;
+    // }
 
     console.log("typesOfToken " + typesOfToken);
     console.log("DEPLOYMENT COMPLETE");
