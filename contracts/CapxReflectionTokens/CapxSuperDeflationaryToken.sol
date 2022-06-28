@@ -566,7 +566,8 @@ contract CapxSuperDeflationaryToken is Ownable, IERC20, IERC20Metadata {
         uint8 decimal_,
         uint256 supply_,
         uint256[5] calldata parameters_,
-        address[3] calldata address_
+        address[2] calldata address_,
+        address autoLPRouter_
     ) checkIsAddressValid(address_[0]) public {
         require(!_initialized,"[Validation] Already Initialized.");
         _name = name_;
@@ -581,13 +582,13 @@ contract CapxSuperDeflationaryToken is Ownable, IERC20, IERC20Metadata {
         _marketingFee = parameters_[3];
         autoLPThreshold = parameters_[4];
 
-        marketingWallet = address_[2];
+        marketingWallet = address_[1];
         _taxEnabled = false;
         swapAndLiquifyEnabled = false;
         _initialized = true;
 
         // Creating Swap Pair
-        IRouter02 _v2Router = IRouter02(address(address_[1]));
+        IRouter02 _v2Router = IRouter02(address(autoLPRouter_));
         v2Pair = IFactory(_v2Router.factory()).createPair(address(this), _v2Router.WETH()); 
         v2Router = _v2Router;
 

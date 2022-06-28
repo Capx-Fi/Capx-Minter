@@ -35,7 +35,7 @@ contract('Deflationary token', async (accounts) => {
 
     before(async () => {
         factoryInstance = await factory.deployed();
-        deflationarytoken = (await factoryInstance.createReflectiveToken(tokenName,tokenSymbol,tokenDecimals,tokenTotalSupply,[ownerAddress,'0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',address2],[200,200,0,0,0],15,0)).logs[0].address
+        deflationarytoken = (await factoryInstance.createReflectiveToken(tokenName,tokenSymbol,tokenDecimals,tokenTotalSupply,[ownerAddress,address2],[200,200,0,0,0],15,0)).logs[0].address
         console.log("Taxable Token Clone deployed at : " + deflationarytoken.toString());
         deflationaryTokenInstance = await deflationaryToken.at(deflationarytoken);
 

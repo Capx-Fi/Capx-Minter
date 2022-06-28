@@ -341,8 +341,9 @@ contract CapxDeflationaryToken is Ownable, IERC20, IERC20Metadata {
         uint8 decimal_,
         uint256 supply_,
         uint256[5] calldata parameters_,
-        address[3] calldata address_
-    ) checkIsAddressValid(address_[0]) public {
+        address[2] calldata address_,
+        address autoLPRouter_    
+        ) checkIsAddressValid(address_[0]) public {
         require(!_initialized,"[Validation] Already Initialized.");
         _name = name_;
         _symbol = symbol_;

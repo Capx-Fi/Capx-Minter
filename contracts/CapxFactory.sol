@@ -33,7 +33,8 @@ abstract contract CapxReflectionToken {
         uint8 decimal_,
         uint256 supply_,
         uint256[5] calldata _parameters,
-        address[3] calldata _address
+        address[2] calldata _address,
+        address _autoLPRouter
     ) public virtual;
 }
 
@@ -55,7 +56,7 @@ contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     event NewTokenDeployed (
         uint256 tokenType,
         address indexed token,
-        uint256 documentHash
+        string documentHash
     );
 
     modifier checkIsAddressValid(address _address)
@@ -83,7 +84,7 @@ contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         erc20Implementations[typesOfToken] = _implementation;
         autoLPRouter = _autoLPRouter;
         emit NewERC20Implementation(
-            "CapxStandardToken", 
+            "Standard Token", 
             typesOfToken, 
             _implementation,
             false,
@@ -162,7 +163,7 @@ contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         uint256 _initialSupply,
         uint256 _totalSupply,
         uint256 _typeOfToken,
-        uint256 _documentHash
+        string calldata _documentHash
     ) external virtual returns (address deployed) {
         // Validation
         require(_decimal >= 8 && _decimal <= 18, "[Validation] Invalid Decimal");
@@ -224,28 +225,31 @@ contract CapxFactory is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         string calldata _symbol,
         uint8 _decimal,
         uint256 _supply,
-        address[3] calldata _address,
+        address[2] calldata _address,
         uint256[5] calldata _parameters,
         uint256 _typeOfToken,
-        uint256 _documentHash
+        string calldata _documentHash
     ) external virtual checkIsAddressValid(_address[0]) returns (address deployed) {
         require(
-            (_typeOfToken == 17 || _address[2] != address(0)) // If Marketing then Marketing Address cannot be Zero.
+            (_typeOfToken != 17 || _address[1] != address(0)) // If Marketing then Marketing Address cannot be Zero.
             && 
-            (_typeOfToken == 14 || _typeOfToken == 16 || _address[1] != address(0)) // If AutoLiquify then Router Address cannot be Zero.
+            ((_typeOfToken != 14 && _typeOfToken != 16) || autoLPRouter != address(0)) // If AutoLiquify then Router Address cannot be Zero.
             , "[Validation] Invalid Address"
         );
         require(_typeOfToken != 0, "Invalid Token Type");
         deployed = create(erc20Implementations[_typeOfToken]);
         // Handling low level exception
         assert(deployed != address(0));
+        // address[3] memory _addressList = [_address[0],autoLPRouter,_address[1]];
+
         CapxReflectionToken(deployed).initializer(
             _name,
             _symbol,
             _decimal,
             _supply,
             _parameters,
-            _address
+            _address,
+            autoLPRouter
         );
         // Updating the mapping with the deployed token for the type of Token
         deployedContracts[_typeOfToken].push(deployed);

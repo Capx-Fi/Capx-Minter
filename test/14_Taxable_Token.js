@@ -35,7 +35,7 @@ contract("Taxable Tokens", async (accounts) => {
 
     before(async () => {
         factoryInstance = await factory.deployed();
-        taxabletoken = (await factoryInstance.createReflectiveToken(tokenName,tokenSymbol,tokenDecimals,tokenTotalSupply,[ownerAddress,address1,address2],[200,0,0,0,0],13,0)).logs[0].address
+        taxabletoken = (await factoryInstance.createReflectiveToken(tokenName,tokenSymbol,tokenDecimals,tokenTotalSupply,[ownerAddress,address2],[200,0,0,0,0],13,0)).logs[0].address
         console.log("Taxable Token Clone deployed at : " + taxabletoken.toString());
         taxableTokenInstance = await taxableToken.at(taxabletoken);
 
