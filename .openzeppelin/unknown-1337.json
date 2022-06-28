@@ -135,6 +135,16 @@
       "address": "0x04bBC4566e32b98162DFD8f6a656B2D56c90b49A",
       "txHash": "0x491b2b8747487cb8e9127d715d61fe1c9db0947001178908e47b17f9846a87d7",
       "kind": "uups"
+    },
+    {
+      "address": "0x76449C7266141459ddad09A2C4c86F53E4818A80",
+      "txHash": "0x1ea2772d7928a7d3cc5c45a1bc08106747e51fb0e03e70b342709a23dca59f44",
+      "kind": "uups"
+    },
+    {
+      "address": "0xbfFa49A8006e7150a3D8988FC5Ac38427276FeA8",
+      "txHash": "0x8bbe57c8c2e9b536742e5a89757673d00d1beb24189cbd002fba22d9bfd9b9cc",
+      "kind": "uups"
     }
   ],
   "impls": {

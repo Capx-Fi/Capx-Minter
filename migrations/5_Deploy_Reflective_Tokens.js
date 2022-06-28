@@ -46,6 +46,7 @@ module.exports = async function (deployer) {
     let CapxFactory = await factory.deployed();
     const result = await CapxFactory.typesOfToken();
     typesOfToken = (result.toNumber());
+    console.log("typesOfToken " + typesOfToken);
 
     if (typesOfToken == 12) {
     console.log("Implementing CapxTaxableToken Contract");
