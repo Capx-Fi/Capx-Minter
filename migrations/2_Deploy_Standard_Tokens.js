@@ -4,25 +4,44 @@ const burnMintToken = artifacts.require("CapxMintBurnToken");
 const factory = artifacts.require("CapxFactory");
 
 module.exports = async function (deployer) {
-    let CapxBurnableToken = await burnableToken.deployed()
-    if (!CapxBurnableToken.address) {
-        await console.log("Deploying CapxBurnableToken Contract");
-        let CapxBurnableToken = await deployer.deploy(burnableToken);
-        await console.log("CapxBurnableToken Address " + CapxBurnableToken.address);
-    }
-    
-    let CapxMintableToken = await mintableToken.deployed()
-    if (!CapxMintableToken.address) {
-        await console.log("Deploying CapxMintableToken Contract");
-        let CapxMintableToken = await deployer.deploy(mintableToken);
-        await console.log("CapxMintableToken Address " + CapxMintableToken.address);   
+    let CapxBurnableToken;
+    let CapxMintableToken;
+    let CapxMintBurnToken;
+
+    try {
+        CapxBurnableToken =await burnableToken.deployed()
+    } catch (error) {
+        if (error.message == "CapxBurnableToken has not been deployed to detected network (network/artifact mismatch)") {
+            await console.log("Deploying CapxBurnableToken Contract");
+            CapxBurnableToken = await deployer.deploy(burnableToken);
+            await console.log("CapxBurnableToken Address " + CapxBurnableToken.address);
+        } else {
+            console.error(error)
+        };
     }
 
-    let CapxMintBurnToken = await burnMintToken.deployed()
-    if (!CapxMintBurnToken.address) {
-        await console.log("Deploying CapxMintBurnToken Contract");
-        let CapxMintBurnToken = await deployer.deploy(burnMintToken);
-        await console.log("CapxMintBurnToken Address " + CapxMintBurnToken.address);
+    try {
+        CapxMintableToken = await mintableToken.deployed()
+    } catch (error) {
+        if (error.message == "CapxMintableToken has not been deployed to detected network (network/artifact mismatch)") {
+            await console.log("Deploying CapxMintableToken Contract");
+            CapxMintableToken = await deployer.deploy(mintableToken);
+            await console.log("CapxMintableToken Address " + CapxMintableToken.address);
+        } else {
+            console.error(error)
+        };
+    }
+
+    try {
+        CapxMintBurnToken = await burnMintToken.deployed()
+    } catch (error) {
+        if (error.message == "CapxMintBurnToken has not been deployed to detected network (network/artifact mismatch)") {
+            await console.log("Deploying CapxMintBurnToken Contract");
+            CapxMintBurnToken = await deployer.deploy(burnMintToken);
+            await console.log("CapxMintBurnToken Address " + CapxMintBurnToken.address);
+        } else {
+            console.error(error)
+        };
     }
 
     let CapxFactory =await factory.deployed();

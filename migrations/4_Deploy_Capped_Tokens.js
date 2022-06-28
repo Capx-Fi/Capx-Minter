@@ -5,32 +5,57 @@ const mintBurnCappedPauseableToken = artifacts.require("CapxMintBurnCappedPausea
 
 const factory = artifacts.require("CapxFactory");
 module.exports = async function (deployer) {
-    let CapxMintableCappedToken = await mintCappedToken.deployed()
-    if (!CapxMintableCappedToken.address) {
-    await console.log("Deploying CapxMintableCappedToken Contract");
-    let CapxMintableCappedToken = await deployer.deploy(mintCappedToken);
-    await console.log("CapxMintableCappedToken Address " + CapxMintableCappedToken.address);
+    let CapxMintableCappedToken;
+    let CapxMintBurnCappedToken;
+    let CapxMintableCappedPauseableToken;
+    let CapxMintBurnCappedPauseableToken;
+
+    try {
+        CapxMintableCappedToken = await mintCappedToken.deployed()
+    } catch (error) {
+        if (error.message == "CapxMintableCappedToken has not been deployed to detected network (network/artifact mismatch)") {
+            await console.log("Deploying CapxMintableCappedToken Contract");
+            CapxMintableCappedToken = await deployer.deploy(mintCappedToken);
+            await console.log("CapxMintableCappedToken Address " + CapxMintableCappedToken.address);
+        } else {
+            console.error(error)
+        };
+    }
+    
+    try {
+        CapxMintBurnCappedToken = await mintBurnCappedToken.deployed()
+    } catch (error) {
+        if (error.message == "CapxMintBurnCappedToken has not been deployed to detected network (network/artifact mismatch)") {
+            await console.log("Deploying CapxMintBurnCappedToken Contract");
+            CapxMintBurnCappedToken = await deployer.deploy(mintBurnCappedToken);
+            await console.log("CapxMintBurnCappedToken Address " + CapxMintBurnCappedToken.address);
+        } else {
+            console.error(error)
+        };
     }
 
-    let CapxMintBurnCappedToken = await mintBurnCappedToken.deployed()
-    if (!CapxMintBurnCappedToken.address) {
-    await console.log("Deploying CapxMintBurnCappedToken Contract");
-    let CapxMintBurnCappedToken = await deployer.deploy(mintBurnCappedToken);
-    await console.log("CapxMintBurnCappedToken Address " + CapxMintBurnCappedToken.address);
+    try {
+        CapxMintableCappedPauseableToken = await mintCappedPauseableToken.deployed()
+    } catch (error) {
+        if (error.message == "CapxMintableCappedPauseableToken has not been deployed to detected network (network/artifact mismatch)") {
+            await console.log("Deploying CapxMintableCappedPauseableToken Contract");
+            CapxMintableCappedPauseableToken = await deployer.deploy(mintCappedPauseableToken);
+            await console.log("CapxMintableCappedPauseableToken Address " + CapxMintableCappedPauseableToken.address);
+        } else {
+            console.error(error)
+        };
     }
 
-    let CapxMintableCappedPauseableToken = await mintCappedPauseableToken.deployed()
-    if (!CapxMintableCappedPauseableToken.address) {
-    await console.log("Deploying CapxMintableCappedPauseableToken Contract");
-    let CapxMintableCappedPauseableToken = await deployer.deploy(mintCappedPauseableToken);
-    await console.log("CapxMintableCappedPauseableToken Address " + CapxMintableCappedPauseableToken.address);
-    }
-
-    let CapxMintBurnCappedPauseableToken = await mintBurnCappedPauseableToken.deployed()
-    if (!CapxMintBurnCappedPauseableToken.address) {
-    await console.log("Deploying CapxMintBurnCappedPauseableToken Contract");
-    let CapxMintBurnCappedPauseableToken = await deployer.deploy(mintBurnCappedPauseableToken);
-    await console.log("CapxMintBurnCappedPauseableToken Address " + CapxMintBurnCappedPauseableToken.address);
+    try {
+        CapxMintBurnCappedPauseableToken = await mintBurnCappedPauseableToken.deployed()
+    } catch (error) {
+        if (error.message == "CapxMintBurnCappedPauseableToken has not been deployed to detected network (network/artifact mismatch)") {
+            await console.log("Deploying CapxMintBurnCappedPauseableToken Contract");
+            CapxMintBurnCappedPauseableToken = await deployer.deploy(mintBurnCappedPauseableToken);
+            await console.log("CapxMintBurnCappedPauseableToken Address " + CapxMintBurnCappedPauseableToken.address);
+        } else {
+            console.error(error)
+        };
     }
 
     let CapxFactory = await factory.deployed();

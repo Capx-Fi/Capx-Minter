@@ -8,39 +8,70 @@ const superDeflationaryToken = artifacts.require("CapxSuperDeflationaryToken");
 const factory = artifacts.require("CapxFactory");
 
 module.exports = async function (deployer) {
-    let CapxTaxableToken = await taxableToken.deployed()
-    if (!CapxTaxableToken.address) {
-    await console.log("Deploying CapxTaxableToken Contract");
-    let CapxTaxableToken = await deployer.deploy(taxableToken);
-    await console.log("CapxTaxableToken Address " + CapxTaxableToken.address);
+    let CapxTaxableToken;
+    let CapxAutoLPTaxableToken;
+    let CapxDeflationaryToken;
+    let CapxAutoLPDeflationaryToken;
+    let CapxSuperDeflationaryToken;
+
+    try {
+        CapxTaxableToken = await taxableToken.deployed();
+    } catch (error) {
+        if (error.message == "CapxTaxableToken has not been deployed to detected network (network/artifact mismatch)") {
+            await console.log("Deploying CapxTaxableToken Contract");
+            CapxTaxableToken = await deployer.deploy(taxableToken);
+            await console.log("CapxTaxableToken Address " + CapxTaxableToken.address);
+        } else {
+            console.error(error);
+        };
     }
 
-    let CapxAutoLPTaxableToken = await autoLPTaxableToken.deployed()
-    if (!CapxAutoLPTaxableToken.address) {
-    await console.log("Deploying CapxAutoLPTaxableToken Contract");
-    let CapxAutoLPTaxableToken = await deployer.deploy(autoLPTaxableToken);
-    await console.log("CapxAutoLPTaxableToken Address " + CapxAutoLPTaxableToken.address);
+    try {
+        CapxAutoLPTaxableToken = await autoLPTaxableToken.deployed();
+    } catch (error) {
+        if (error.message == "CapxAutoLPTaxableToken has not been deployed to detected network (network/artifact mismatch)") {
+            await console.log("Deploying CapxAutoLPTaxableToken Contract");
+            CapxAutoLPTaxableToken = await deployer.deploy(autoLPTaxableToken);
+            await console.log("CapxAutoLPTaxableToken Address " + CapxAutoLPTaxableToken.address);
+        } else {
+            console.error(error);
+        };
     }
 
-    let CapxDeflationaryToken = await deflationaryToken.deployed()
-    if (!CapxDeflationaryToken.address) {
-    await console.log("Deploying CapxDeflationaryToken Contract");
-    let CapxDeflationaryToken = await deployer.deploy(deflationaryToken);
-    await console.log("CapxDeflationaryToken Address " + CapxDeflationaryToken.address);
+    try {
+        CapxDeflationaryToken = await deflationaryToken.deployed();
+    } catch (error) {
+        if (error.message == "CapxDeflationaryToken has not been deployed to detected network (network/artifact mismatch)") {
+            await console.log("Deploying CapxDeflationaryToken Contract");
+            CapxDeflationaryToken = await deployer.deploy(deflationaryToken);
+            await console.log("CapxDeflationaryToken Address " + CapxDeflationaryToken.address);
+        } else {
+            console.error(error);
+        };
     }
 
-    let CapxAutoLPDeflationaryToken = await autoLPDeflationaryToken.deployed()
-    if (!CapxAutoLPDeflationaryToken.address) {
-    await console.log("Deploying CapxAutoLPDeflationaryToken Contract");
-    let CapxAutoLPDeflationaryToken = await deployer.deploy(autoLPDeflationaryToken);
-    await console.log("CapxAutoLPDeflationaryToken Address " + CapxAutoLPDeflationaryToken.address);
+    try {
+        CapxAutoLPDeflationaryToken = await autoLPDeflationaryToken.deployed();
+    } catch (error) {
+        if (error.message == "CapxAutoLPDeflationaryToken has not been deployed to detected network (network/artifact mismatch)") {
+            await console.log("Deploying CapxAutoLPDeflationaryToken Contract");
+            CapxAutoLPDeflationaryToken = await deployer.deploy(autoLPDeflationaryToken);
+            await console.log("CapxAutoLPDeflationaryToken Address " + CapxAutoLPDeflationaryToken.address);
+        } else {
+            console.error(error);
+        };
     }
 
-    let CapxSuperDeflationaryToken = await superDeflationaryToken.deployed()
-    if (!CapxSuperDeflationaryToken.address) {
-    await console.log("Deploying CapxSuperDeflationaryToken Contract");
-    let CapxSuperDeflationaryToken = await deployer.deploy(superDeflationaryToken);
-    await console.log("CapxSuperDeflationaryToken Address " + CapxSuperDeflationaryToken.address);
+    try {
+        CapxSuperDeflationaryToken = await superDeflationaryToken.deployed();
+    } catch (error) {
+        if (error.message == "CapxSuperDeflationaryToken has not been deployed to detected network (network/artifact mismatch)") {
+            await console.log("Deploying CapxSuperDeflationaryToken Contract");
+            CapxSuperDeflationaryToken = await deployer.deploy(superDeflationaryToken);
+            await console.log("CapxSuperDeflationaryToken Address " + CapxSuperDeflationaryToken.address);
+        } else {
+            console.error(error);
+        };
     }
 
     let CapxFactory = await factory.deployed();
@@ -102,4 +133,7 @@ module.exports = async function (deployer) {
     );
     typesOfToken += 1;
     }
+
+    console.log("typesOfToken " + typesOfToken);
+    console.log("DEPLOYMENT COMPLETE");
 }
