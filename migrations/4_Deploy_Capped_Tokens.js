@@ -3,71 +3,74 @@ const mintBurnCappedToken = artifacts.require("CapxMintBurnCappedToken");
 const mintCappedPauseableToken = artifacts.require("CapxMintableCappedPauseableToken");
 const mintBurnCappedPauseableToken = artifacts.require("CapxMintBurnCappedPauseableToken");
 
-const factory = artifacts.require("CapxFactory");
+const factory = artifacts.require("CapxFactoryV2");
 module.exports = async function (deployer) {
+
+    let CapxFactory =await factory.deployed();
+    await console.log("CapxFactory Address",CapxFactory.address);
+    const result = await CapxFactory.typesOfToken();
+    typesOfToken = (result.toNumber());
+    console.log("typesOfToken " + typesOfToken);
+
     let CapxMintableCappedToken = await mintCappedToken.deployed()
     if (!CapxMintableCappedToken.address) {
-    await console.log("Deploying CapxMintableCappedToken Contract");
-    let CapxMintableCappedToken = await deployer.deploy(mintCappedToken);
-    await console.log("CapxMintableCappedToken Address " + CapxMintableCappedToken.address);
+        await console.log("Deploying CapxMintableCappedToken Contract");
+        let CapxMintableCappedToken = await deployer.deploy(mintCappedToken);
+        await console.log("CapxMintableCappedToken Address " + CapxMintableCappedToken.address);
     }
+
+    if (typesOfToken == 8) {
+        console.log("Implementing CapxMintableCappedToken Contract");
+        await CapxFactory.addNewERC20Implementation(
+            "Mintable Capped Token",
+            CapxMintableCappedToken.address,
+            false,
+            [true,false,false,true]
+        );
+        typesOfToken += 1;
+    }   
 
     let CapxMintBurnCappedToken = await mintBurnCappedToken.deployed()
     if (!CapxMintBurnCappedToken.address) {
-    await console.log("Deploying CapxMintBurnCappedToken Contract");
-    let CapxMintBurnCappedToken = await deployer.deploy(mintBurnCappedToken);
-    await console.log("CapxMintBurnCappedToken Address " + CapxMintBurnCappedToken.address);
+        await console.log("Deploying CapxMintBurnCappedToken Contract");
+        let CapxMintBurnCappedToken = await deployer.deploy(mintBurnCappedToken);
+        await console.log("CapxMintBurnCappedToken Address " + CapxMintBurnCappedToken.address);
+    }
+
+    if (typesOfToken == 9) {
+        console.log("Implementing CapxMintBurnCappedToken Contract");
+        await CapxFactory.addNewERC20Implementation(
+            "Mintable Burnable & Capped Token",
+            CapxMintBurnCappedToken.address,
+            false,
+            [true,true,false,true]
+        );
+        typesOfToken += 1;
     }
 
     let CapxMintableCappedPauseableToken = await mintCappedPauseableToken.deployed()
     if (!CapxMintableCappedPauseableToken.address) {
-    await console.log("Deploying CapxMintableCappedPauseableToken Contract");
-    let CapxMintableCappedPauseableToken = await deployer.deploy(mintCappedPauseableToken);
-    await console.log("CapxMintableCappedPauseableToken Address " + CapxMintableCappedPauseableToken.address);
+        await console.log("Deploying CapxMintableCappedPauseableToken Contract");
+        let CapxMintableCappedPauseableToken = await deployer.deploy(mintCappedPauseableToken);
+        await console.log("CapxMintableCappedPauseableToken Address " + CapxMintableCappedPauseableToken.address);
+    }
+
+    if (typesOfToken == 10) {
+        console.log("Implementing CapxMintableCappedPauseableToken Contract");
+        await CapxFactory.addNewERC20Implementation(
+            "Mintable Capped & Pauseable Token",
+            CapxMintableCappedPauseableToken.address,
+            false,
+            [true,false,true,true]
+        );
+        typesOfToken += 1;
     }
 
     let CapxMintBurnCappedPauseableToken = await mintBurnCappedPauseableToken.deployed()
     if (!CapxMintBurnCappedPauseableToken.address) {
-    await console.log("Deploying CapxMintBurnCappedPauseableToken Contract");
-    let CapxMintBurnCappedPauseableToken = await deployer.deploy(mintBurnCappedPauseableToken);
-    await console.log("CapxMintBurnCappedPauseableToken Address " + CapxMintBurnCappedPauseableToken.address);
-    }
-
-    let CapxFactory = await factory.deployed();
-    const result = await CapxFactory.typesOfToken();
-    typesOfToken = (result.toNumber());
-
-    if (typesOfToken == 8) {
-    console.log("Implementing CapxMintableCappedToken Contract");
-    await CapxFactory.addNewERC20Implementation(
-        "Mintable Capped Token",
-        CapxMintableCappedToken.address,
-        false,
-        [true,false,false,true]
-    );
-    typesOfToken += 1;
-    }
-
-    if (typesOfToken == 9) {
-    console.log("Implementing CapxMintBurnCappedToken Contract");
-    await CapxFactory.addNewERC20Implementation(
-        "Mintable Burnable & Capped Token",
-        CapxMintBurnCappedToken.address,
-        false,
-        [true,true,false,true]
-    );
-    typesOfToken += 1;
-    }
-
-    if (typesOfToken == 10) {
-    console.log("Implementing CapxMintableCappedPauseableToken Contract");
-    await CapxFactory.addNewERC20Implementation(
-        "Mintable Capped & Pauseable Token",
-        CapxMintableCappedPauseableToken.address,
-        false,
-        [true,false,true,true]
-    );
-    typesOfToken += 1;
+        await console.log("Deploying CapxMintBurnCappedPauseableToken Contract");
+        let CapxMintBurnCappedPauseableToken = await deployer.deploy(mintBurnCappedPauseableToken);
+        await console.log("CapxMintBurnCappedPauseableToken Address " + CapxMintBurnCappedPauseableToken.address);
     }
 
     if (typesOfToken == 11) {

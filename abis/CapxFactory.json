@@ -64,6 +64,18 @@
         "internalType": "address",
         "name": "implementation",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "isReflective",
+        "type": "bool"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool[4]",
+        "name": "features",
+        "type": "bool[4]"
       }
     ],
     "name": "NewERC20Implementation",
@@ -86,9 +98,9 @@
       },
       {
         "indexed": false,
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
+        "internalType": "string",
+        "name": "documentHash",
+        "type": "string"
       }
     ],
     "name": "NewTokenDeployed",
@@ -125,6 +137,19 @@
     ],
     "name": "Upgraded",
     "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "autoLPRouter",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
   },
   {
     "inputs": [
@@ -265,6 +290,11 @@
         "internalType": "address",
         "name": "_implementation",
         "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_autoLPRouter",
+        "type": "address"
       }
     ],
     "name": "initialize",
@@ -283,9 +313,32 @@
         "internalType": "address",
         "name": "_implementation",
         "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "_isReflective",
+        "type": "bool"
+      },
+      {
+        "internalType": "bool[4]",
+        "name": "_features",
+        "type": "bool[4]"
       }
     ],
     "name": "addNewERC20Implementation",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_autoLPRouter",
+        "type": "address"
+      }
+    ],
+    "name": "updateAutoLPRouter",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -323,9 +376,14 @@
         "type": "uint256"
       },
       {
-        "internalType": "bool[4]",
-        "name": "_features",
-        "type": "bool[4]"
+        "internalType": "uint256",
+        "name": "_typeOfToken",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_documentHash",
+        "type": "string"
       }
     ],
     "name": "createToken",
@@ -362,19 +420,24 @@
         "type": "uint256"
       },
       {
-        "internalType": "address[3]",
+        "internalType": "address[2]",
         "name": "_address",
-        "type": "address[3]"
-      },
-      {
-        "internalType": "bool[4]",
-        "name": "_reflectionType",
-        "type": "bool[4]"
+        "type": "address[2]"
       },
       {
         "internalType": "uint256[5]",
         "name": "_parameters",
         "type": "uint256[5]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_typeOfToken",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_documentHash",
+        "type": "string"
       }
     ],
     "name": "createReflectiveToken",
